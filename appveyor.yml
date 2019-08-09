@@ -1,0 +1,95 @@
+version: "{branch} {build}"
+
+image: Visual Studio 2017
+
+environment:
+  JAVA_HOME: C:\jdk12
+  APPVEYOR_CACHE_ENTRY_ZIP_ARGS: "-t7z -m0=lzma -mx=9"
+
+shallow_clone: true
+
+build_script:
+  - ps: |
+      $client = New-Object net.webclient
+      $client.DownloadFile('http://jdk.java.net/12/', 'C:\Users\appveyor\openjdk.html')
+      $openJdk = cat C:\Users\appveyor\openjdk.html | where { $_ -match "href.*https://download.java.net.*jdk[1-9][0-9].*windows-x64.*zip\`"" } | %{ $_ -replace "^.*https:", "https:" } | %{ $_ -replace ".zip\`".*$", ".zip" }
+      echo "Download boot JDK from: $openJdk"
+      $client.DownloadFile($openJdk, 'C:\Users\appveyor\openjdk.zip')
+      Expand-Archive -Path 'C:\Users\appveyor\openjdk.zip' -DestinationPath 'C:\Users\appveyor\openjdk'
+      echo "JAVA_HOME = $env:JAVA_HOME"
+      Copy-Item -Path 'C:\Users\appveyor\openjdk\*\' -Destination "$env:JAVA_HOME" -Recurse -Force
+      . .\tools\scripts\build.ps1 2>&1
+
+on_finish:
+  - ps: |
+        $dbgDir = ".\javafx-debug-symbols\"
+        $dbgArchive = "javafx-debug-symbols.zip"
+        if ((Get-ChildItem -Include @("*.pdb","*.map") -Recurse | Where { -not $_.PSIsContainer}).Count -gt 0) {
+          # The build generated at least one map or pdb file, so bundle them and upload to Appveyor.
+          Get-ChildItem -Include @("*.pdb","*.map") -Recurse | Copy-Item -Destination (New-Item -Type directory -Force $dbgDir) -Force
+          Compress-Archive -Path $($dbgDir + '*') -DestinationPath $dbgArchive -CompressionLevel Optimal
+          Push-AppveyorArtifact $dbgArchive -Verbose
+        }
+
+        $crashes = Get-ChildItem -Include hs_err_pid*.log -Recurse
+        $javaExe = $env:JAVA_HOME + '\bin'
+        ForEach ($crash in $crashes) {
+          $env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\"
+          $env:Path += ";C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\"
+          $env:Path += ";C:\Program Files (x86)\Windows Kits\8.0\Debuggers\x64\"
+          $env:Path += ";C:\Program Files (x86)\Windows Kits\8.0\Debuggers\x86\"
+          Write-Host "Printing crash dump (${crash}):"
+          Get-Content $crash
+          $crashDump = $crash.DirectoryName + '\' + $crash.Basename + '.mdmp'
+          Write-Host "\n\n--- NATIVE BACK TRACE ---"
+          # https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/cdb-command-line-options
+          # !sym noisy = Activates noisy symbol loading.
+          # ~* = Thread status for all threads in the process.
+          # .kframes 100 = Set stack length to 100 frames.
+          # kP = Display stack backtrace with the full parameters for each function that is called in the stack trace.
+          # .ecxr = Display exception context record.
+          # dpp = Display referenced memory (32-bit or 64-bit depending on architecture) in DWORD or QWORD.
+          # r. = Displays the registers used in the current instruction.
+          # q = Quit.
+          cdb -v -z $crashDump -c '!sym noisy;~*;kP;dpp;r.;q' -i $javaExe -lines -y "srv*C:\MSSymbols*http://msdl.microsoft.com/download/symbols;$($env:APPVEYOR_BUILD_FOLDER)\javafx-debug-symbols\"
+          Write-Host "\n\n--- END NATIVE BACK TRACE ---"
+        }
+
+        # This technically works but is really inefficient as it requires an HTTP request for every
+        # single test. Ideally we want to batch the results. We can do this by POSTing to:
+        # $APPVEYOR_API_URL/api/tests/batch
+        # With JSON body:
+        # https://www.appveyor.com/docs/build-worker-api/#rest-3
+        # In order to do this we will need to iterate over all the XML files and convert them into
+        # a big JSON array.
+        Write-Host 'Uploading test results to AppVeyor…'
+        $wc = New-Object 'System.Net.WebClient'
+        $modules = @("javafx.base", "javafx.graphics", "javafx.controls", "javafx.fxml")
+        $ErrorActionPreference = "SilentlyContinue"
+        ForEach ($module in $modules) {
+          ForEach ($file in Get-ChildItem ".\modules\${module}\build\test-results\test\TEST-*.xml") {
+            try {
+              $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", $file) 2>&1 | Out-Null
+            } catch [System.Net.WebException] {
+              # Ignore.
+            } finally {
+              $ErrorActionPreference = "Continue"
+            }
+          }
+        }
+
+on_success:
+  - ps: |
+        $modules = "javafx-modules.zip"
+        Compress-Archive -Path ".\build\modular-sdk" -DestinationPath $modules -CompressionLevel Optimal
+        Push-AppveyorArtifact $modules -Verbose
+
+cache:
+  - C:\Users\appveyor\.gradle\caches
+  - C:\Users\appveyor\.gradle\wrapper -> gradle\wrapper\gradle-wrapper.properties
+  - '%JAVA_HOME% -> appveyor.yml'
+  - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+  - C:\ProgramData\chocolatey\cache -> appveyor.yml
+  - C:\MSSymbols -> appveyor.yml
+
