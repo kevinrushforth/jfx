@@ -110,6 +110,7 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
     if (type == kCGEventTapDisabledByTimeout ||
         type == kCGEventTapDisabledByUserInput)
     {
+        fprintf(stderr, "KCR: re-enable tap\n");
         // OS may disable event tap if it handles events too slowly
         // or for some other reason based on user input.
         // This is undesirable, so enable event tap after such a reset.
@@ -120,6 +121,7 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
 
     if (type == NSEventTypeGesture)
     {
+        //fprintf(stderr, "KCR: process NSEventTypeGesture\n");
         LOG("TOUCHES: listenTouchEvents: process NSEventTypeGesture\n");
         NSEvent* theEvent = [NSEvent eventWithCGEvent:event];
         if (theEvent)
@@ -195,6 +197,7 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
         // referenced in the bug.
         //
 
+        fprintf(stderr, "KCR: enableTouchEventTap\n");
         self->eventTap = CGEventTapCreate(kCGHIDEventTap,
                                           kCGHeadInsertEventTap,
                                           kCGEventTapOptionListenOnly,
@@ -247,6 +250,7 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
 
 - (void)enableTouchInputEventTap
 {
+    fprintf(stderr, "KCR: enableTouchEventTap\n");
     CGEventTapEnable(self->eventTap, true);
 }
 
