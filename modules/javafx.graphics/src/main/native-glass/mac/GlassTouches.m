@@ -142,6 +142,23 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
 static NSEvent* processTouchEvents(NSEvent *event)
 {
     fprintf(stderr, "KCR: processTouchEvents: event = 0x%p\n", event);
+
+    NSEventType type = [event type];
+    if (type == NSEventTypeGesture)
+    {
+        //fprintf(stderr, "KCR: process NSEventTypeGesture\n");
+        LOG("TOUCHES: listenTouchEvents: process NSEventTypeGesture\n");
+        //NSEvent* theEvent = [NSEvent eventWithCGEvent:event];
+        if (event)
+        {
+            if (glassTouches)
+            {
+                [glassTouches sendJavaTouchEvent:event];
+            }
+        }
+    } else {
+        LOG("TOUCHES: listenTouchEvents: unknown event ignored, type = %d\n", type);
+    }
     return event;
 }
 
@@ -200,7 +217,7 @@ static NSEvent* processTouchEvents(NSEvent *event)
         fprintf(stderr, "KCR: enableLocalEventMonitoring\n");
 
         self->eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:
-                (NSEventMaskGesture | NSEventMaskMouseMoved)
+                (NSEventMaskAny)
                 handler:^(NSEvent *event) {
             return processTouchEvents(event);
         }];
