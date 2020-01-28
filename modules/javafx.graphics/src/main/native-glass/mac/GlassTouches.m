@@ -34,7 +34,7 @@
 
 #undef USE_EVENT_TAP
 // Comment the next line to use local event monitoring instead of event tap
-// #define USE_EVENT_TAP 1
+//#define USE_EVENT_TAP 1
 
 #define VERBOSE
 #ifndef VERBOSE
@@ -221,7 +221,7 @@ static NSEvent* processTouchEvents(NSEvent *event)
         self->lastTouchId   = 0;
 
 #ifndef USE_EVENT_TAP
-        fprintf(stderr, "KCR: enableLocalEventMonitoring\n");
+        fprintf(stderr, "KCR: addLocalMonitorForEventsMatchingMask\n");
 
         self->eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:
                 (NSEventMaskAny)
