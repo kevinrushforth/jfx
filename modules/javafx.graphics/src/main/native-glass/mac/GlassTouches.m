@@ -32,6 +32,9 @@
 #import "GlassHelper.h"
 #import "GlassStatics.h"
 
+#undef USE_EVENT_TAP
+// Comment the next line to use local event monitoring instead of event tap
+// #define USE_EVENT_TAP 1
 
 #define VERBOSE
 #ifndef VERBOSE
@@ -49,6 +52,8 @@ static GlassTouches* glassTouches = nil;
 - (void)releaseTouches;
 
 - (void)terminateImpl;
+
+- (void)enableTouchInputEventTap;
 
 - (void)sendJavaTouchEvent:(NSEvent *)theEvent;
 - (void)notifyTouch:(JNIEnv*)env    identity:(const id)identity
@@ -102,7 +107,6 @@ typedef struct
 } TouchPoint;
 
 
-/*
 static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
                              CGEventRef event, void* refcon)
 {
@@ -136,14 +140,18 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
 
     return event;
 }
-*/
 
 
 static NSEvent* processTouchEvents(NSEvent *event)
 {
-    fprintf(stderr, "KCR: processTouchEvents: event = 0x%p\n", event);
+    fprintf(stderr, "KCR: processTouchEvents: ");
+    fprintf(stderr, "type = %d\n", [event type]);
+
+    fprintf(stderr, "     ");
+    fprintf(stderr, "subtype = %d\n", [event subtype]);
 
     NSEventType type = [event type];
+
     if (type == NSEventTypeGesture)
     {
         //fprintf(stderr, "KCR: process NSEventTypeGesture\n");
@@ -206,14 +214,13 @@ static NSEvent* processTouchEvents(NSEvent *event)
     if (self != nil)
     {
         self->curConsumer   = nil;
-        /*
         self->eventTap      = nil;
         self->runLoopSource = nil;
-        */
         self->eventMonitor  = nil;
         self->touches       = nil;
         self->lastTouchId   = 0;
 
+#ifndef USE_EVENT_TAP
         fprintf(stderr, "KCR: enableLocalEventMonitoring\n");
 
         self->eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:
@@ -221,8 +228,9 @@ static NSEvent* processTouchEvents(NSEvent *event)
                 handler:^(NSEvent *event) {
             return processTouchEvents(event);
         }];
+#endif /* !USE_EVENT_TAP */
 
-        /*
+#ifdef USE_EVENT_TAP
         //
         // Notes after fixing RT-23199:
         //
@@ -233,11 +241,13 @@ static NSEvent* processTouchEvents(NSEvent *event)
         // referenced in the bug.
         //
 
+        fprintf(stderr, "KCR: enableTouchEventTap\n");
         self->eventTap = CGEventTapCreate(kCGHIDEventTap,
                                           kCGHeadInsertEventTap,
                                           kCGEventTapOptionListenOnly,
                                           CGEventMaskBit(NSEventTypeGesture),
                                           listenTouchEvents, nil);
+
         LOG("TOUCHES: eventTap=%p\n", self->eventTap);
 
         if (self->eventTap)
@@ -252,7 +262,7 @@ static NSEvent* processTouchEvents(NSEvent *event)
             CFRunLoopAddSource(CFRunLoopGetCurrent(), self->runLoopSource,
                                kCFRunLoopCommonModes);
         }
-        */
+#endif /* USE_EVENT_TAP */
     }
     return self;
 }
@@ -263,7 +273,7 @@ static NSEvent* processTouchEvents(NSEvent *event)
 @implementation GlassTouches (hidden)
 - (void)terminateImpl
 {
-    /*
+#ifdef USE_EVENT_TAP
     LOG("TOUCHES: terminateImpl eventTap=%p runLoopSource=%p\n", self->eventTap,
         self->runLoopSource);
 
@@ -280,19 +290,19 @@ static NSEvent* processTouchEvents(NSEvent *event)
         CFRelease(self->eventTap);
         self->eventTap = nil;
     }
-    */
-
+#endif /* USE_EVENT_TAP */
     [self releaseTouches];
 }
 
-/*
 - (void)enableTouchInputEventTap
 {
+#ifdef USE_EVENT_TAP
     fprintf(stderr, "KCR: enableTouchEventTap\n");
     CGEventTapEnable(self->eventTap, true);
+#else /* !USE_EVENT_TAP */
+    fprintf(stderr, "***** KCR: error should not call enableTouchEventTap\n");
+#endif /* !USE_EVENT_TAP */
 }
-*/
-
 
 - (void)sendJavaTouchEvent:(NSEvent *)theEvent
 {

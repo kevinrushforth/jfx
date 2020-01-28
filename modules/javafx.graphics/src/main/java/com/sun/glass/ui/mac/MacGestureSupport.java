@@ -59,6 +59,8 @@ final class MacGestureSupport {
 
     public static void notifyBeginTouchEvent(View view, int modifiers,
                                              int touchEventCount) {
+        System.err.println("KCR: notifyBeginTouchEvent:"
+                + " count = " + touchEventCount);
         touches.notifyBeginTouchEvent(view, modifiers, isDirect, touchEventCount);
     }
 
@@ -74,10 +76,16 @@ final class MacGestureSupport {
 
         final int intX = (int) (10000 * x);
         final int intY = 10000 - (int) (10000 * y);
+        System.err.println("KCR: notifyNextTouchEvent:"
+                + " state = " + state
+                + " id = " + id
+                + " x = " + x
+                + " y = " + y);
         touches.notifyNextTouchEvent(view, state, id, intX, intY, intX, intY);
     }
 
     public static void notifyEndTouchEvent(View view) {
+        System.err.println("KCR: notifyEndTouchEvent");
         touches.notifyEndTouchEvent(view);
     }
 

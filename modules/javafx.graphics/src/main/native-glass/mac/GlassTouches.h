@@ -33,10 +33,8 @@
 {
 @private
     GlassViewDelegate*      curConsumer;
-    /*
     CFMachPortRef           eventTap;
     CFRunLoopSourceRef      runLoopSource;
-    */
     id                      eventMonitor;
     NSMutableDictionary*    touches;
     jlong                   lastTouchId;
