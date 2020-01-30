@@ -52,6 +52,8 @@
             options:(NSTrackingMouseMoved | NSTrackingActiveAlways | NSTrackingInVisibleRect)
             owner:self userInfo:nil];
         [self addTrackingArea: self->trackingArea];
+        fprintf(stderr, "KCR: setAcceptsTouchEvents:YES\n");
+        [self setAcceptsTouchEvents:YES];
     }
     return self;
 }

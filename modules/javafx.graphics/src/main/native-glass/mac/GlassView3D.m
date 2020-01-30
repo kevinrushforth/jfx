@@ -246,6 +246,8 @@
         self->nsAttrBuffer = [[NSAttributedString alloc] initWithString:@""];
         self->imEnabled = NO;
         self->shouldProcessKeyEvent = YES;
+        fprintf(stderr, "KCR: setAcceptsTouchEvents:YES\n");
+        [self setAcceptsTouchEvents:YES];
     }
     return self;
 }

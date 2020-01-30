@@ -145,10 +145,12 @@ static CGEventRef listenTouchEvents(CGEventTapProxy proxy, CGEventType type,
 static NSEvent* processTouchEvents(NSEvent *event)
 {
     fprintf(stderr, "KCR: processTouchEvents: ");
+    /*
     fprintf(stderr, "type = %d\n", [event type]);
 
     fprintf(stderr, "     ");
     fprintf(stderr, "subtype = %d\n", [event subtype]);
+    */
 
     NSEventType type = [event type];
 
@@ -165,7 +167,7 @@ static NSEvent* processTouchEvents(NSEvent *event)
             }
         }
     } else {
-        LOG("TOUCHES: listenTouchEvents: unknown event ignored, type = %d\n", type);
+        LOG("TOUCHES: processTouchEvents: unknown event ignored, type = %d\n", type);
     }
     return event;
 }
@@ -224,7 +226,8 @@ static NSEvent* processTouchEvents(NSEvent *event)
         fprintf(stderr, "KCR: addLocalMonitorForEventsMatchingMask\n");
 
         self->eventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:
-                (NSEventMaskAny)
+                //(NSEventMaskAny)
+                (NSEventMaskGesture)
                 handler:^(NSEvent *event) {
             return processTouchEvents(event);
         }];
