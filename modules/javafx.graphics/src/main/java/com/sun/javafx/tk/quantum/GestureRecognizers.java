@@ -34,6 +34,7 @@ class GestureRecognizers implements GestureRecognizer {
     private GestureRecognizer workList[];
 
     void add(GestureRecognizer r) {
+        System.err.println("KCR: GestureRecognizers::add(" + r + ")");
         if (!contains(r)) {
             recognizers.add(r);
             workList = null;

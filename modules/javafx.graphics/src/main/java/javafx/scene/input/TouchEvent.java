@@ -308,4 +308,11 @@ public final class TouchEvent extends InputEvent {
         return sb.append("]").toString();
     }
 
+
+    {
+        System.err.println();
+        System.err.println("TouchEvent constructed");
+        Thread.dumpStack();
+    }
+
 }

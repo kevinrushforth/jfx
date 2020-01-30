@@ -150,6 +150,14 @@ public class GestureEvent extends InputEvent {
                 altDown, metaDown, direct, inertia, pickResult);
     }
 
+    /*
+    {
+        System.err.println();
+        System.err.println("GestureEvent constructed");
+        Thread.dumpStack();
+    }
+    */
+
     /**
      * Fills the given event by this event's coordinates recomputed to the given
      * source object.

@@ -1238,7 +1238,7 @@ class GlassViewEventHandler extends View.EventHandler {
             View view, final long time, final int modifiers,
             final boolean isDirect, final int touchEventCount)
     {
-        System.err.println("GlassViewEventHandler::handleBeginTouchEvent: "
+        System.err.println("KCR: GlassViewEventHandler::handleBeginTouchEvent: "
                 + "time = " + time
                 + ", touchEventCount = " + touchEventCount);
         if (PULSE_LOGGING_ENABLED) {
@@ -1278,7 +1278,7 @@ class GlassViewEventHandler extends View.EventHandler {
             View view, final long time, final int type, final long touchId,
             final int x, final int y, final int xAbs, final int yAbs)
     {
-        System.err.println("GlassViewEventHandler::handleNextTouchEvent: "
+        System.err.println("KCR: GlassViewEventHandler::handleNextTouchEvent: "
                 + "time = " + time
                 + ", type = " + type
                 + ", touchId = " + touchId
@@ -1351,7 +1351,7 @@ class GlassViewEventHandler extends View.EventHandler {
     }
 
     @Override public void handleEndTouchEvent(View view, long time) {
-        System.err.println("GlassViewEventHandler::handleEndTouchEvent:"
+        System.err.println("KCR: GlassViewEventHandler::handleEndTouchEvent:"
                 + "time = " + time);
         if (PULSE_LOGGING_ENABLED) {
             PulseLogger.newInput("END_TOUCH_EVENT");
