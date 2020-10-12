@@ -62,7 +62,7 @@ Once your changes and tests are ready to submit for review:
 
 1. Test your changes
 
-    Run the test suite to make sure that nothing is broken.
+    Run the test suite to make sure that nothing is broken. For most code changes, you need to provide new tests covering those changes. At least one of the new tests should fail before your proposed fix and pass after your proposed fix.
 
 2. Rebase your changes
 
