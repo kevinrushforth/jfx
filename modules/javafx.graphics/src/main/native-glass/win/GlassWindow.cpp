@@ -356,11 +356,19 @@ LRESULT GlassWindow::WindowProc(UINT msg, WPARAM wParam, LPARAM lParam)
             }
             break;
         case WM_DWMCOMPOSITIONCHANGED:
+            fprintf(stderr, "WM_DWMCOMPOSITIONCHANGED: ");
             if (m_isUnified && (IS_WINVISTA)) {
                 BOOL bEnabled = FALSE;
                 if(SUCCEEDED(::DwmIsCompositionEnabled(&bEnabled)) && bEnabled) {
+                    /*
                     MARGINS dwmMargins = { -1, -1, -1, -1 };
-                    ::DwmExtendFrameIntoClientArea(GetHWND(), &dwmMargins);
+                    */
+                    MARGINS dwmMargins = { 16384, 16384, 16384, 16384 };
+                    if (SUCCEEDED(::DwmExtendFrameIntoClientArea(GetHWND(), &dwmMargins))) {
+                        fprintf(stderr, "OK\n");
+                    } else {
+                        fprintf(stderr, "FAILED\n");
+                    }
                 }
             }
             //When toggling between Aero and Classic theme the size of window changes
