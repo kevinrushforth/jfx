@@ -43,6 +43,8 @@
 
 @implementation GlassWindow (Overrides)
 
+// NSPoint lastOrigin;
+
 - (void)dealloc
 {
     assert(pthread_main_np() == 1);
@@ -59,6 +61,45 @@
 }
 
 #pragma mark --- Delegate
+
+
+- (void)fixChildWindow
+{
+    if (!self->owner) return;
+
+    BOOL needToFixWindow = NO;
+    if (@available(macOS 10.15, *)) {
+        needToFixWindow = YES;
+    }
+    if (@available(macOS 10.16, *)) {
+        needToFixWindow = NO;
+    }
+
+    if (!needToFixWindow) return;
+
+    NSWindow *parent = [self->nsWindow parentWindow];
+    NSLog(@"    parent : %p  owner: %p", parent, self->owner);
+
+    // Remove self as a child window of parent if screens differ
+    if (parent && [parent screen] != [self->nsWindow screen])
+    {
+        NSLog(@"    parent screen: %p", [parent screen]);
+        [parent removeChildWindow:self->nsWindow];
+    }
+
+    // Add self as a child window of owner if screens are same
+    if (!parent && [self->owner screen] == [self->nsWindow screen])
+    {
+        NSLog(@"    owner screen: %p", [self->owner screen]);
+        [self->owner addChildWindow:self->nsWindow ordered:NSWindowAbove];
+    }
+}
+
+- (void)windowDidChangeScreen:(NSNotification *)notification
+{
+    NSLog(@"windowDidChangeScreen: %p", [self->nsWindow screen]);
+    [self fixChildWindow];
+}
 
 - (void)windowDidBecomeKey:(NSNotification *)notification
 {
@@ -99,6 +140,7 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    NSLog(@"windowWillClose !!!");
     // Unparent self. Otherwise the code hangs
     if ([self->nsWindow parentWindow])
     {
@@ -128,8 +170,33 @@
 
 - (void)windowDidMove:(NSNotification *)notification
 {
-    //NSLog(@"windowDidMove");
+    NSLog(@"");
+    NSPoint origin = [self->nsWindow frame].origin;
+    NSLog(@"windowDidMove: %f, %f  screen: %p",
+          origin.x, origin.y, [self->nsWindow screen]);
     [self _sendJavaWindowMoveEventForFrame:[self _flipFrame]];
+
+    [self fixChildWindow];
+
+    NSWindow *parent = [self->nsWindow parentWindow];
+    if (parent)
+    {
+        NSPoint parentOrigin = [parent frame].origin;
+        NSLog(@"    parent: %f, %f  screen: %p",
+              parentOrigin.x, parentOrigin.y, [parent screen]);
+    }
+
+    NSArray<__kindof NSWindow *> *children = [self->nsWindow childWindows];
+    if ([children count] > 0)
+    {
+        NSWindow *child = [children objectAtIndex:0];
+        if (child)
+        {
+            NSPoint childOrigin = [child frame].origin;
+            NSLog(@"    child: %f, %f  screen: %p",
+                  childOrigin.x, childOrigin.y, [child screen]);
+        }
+    }
 }
 
 - (void)windowDidChangeBackingProperties:(NSNotification *)notification

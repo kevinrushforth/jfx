@@ -31,4 +31,6 @@
 
 @interface GlassWindow (Overrides)
 
+- (void)fixChildWindow;
+
 @end

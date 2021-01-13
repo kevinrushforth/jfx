@@ -793,15 +793,21 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacWindow__1setLevel
     GLASS_ASSERT_MAIN_JAVA_THREAD(env);
     GLASS_POOL_ENTER;
     {
+        NSLog(@"MacWindow::setLevel");
         GlassWindow *window = getGlassWindow(env, jPtr);
         NSInteger level = NSNormalWindowLevel;
         switch (jLevel)
         {
             case com_sun_glass_ui_Window_Level_FLOATING:
                 level = NSFloatingWindowLevel;
+                NSLog(@"        level: NSFloatingWindowLevel");
                 break;
             case com_sun_glass_ui_Window_Level_TOPMOST:
+                NSLog(@"        level: NSScreenSaverWindowLevel");
                 level = NSScreenSaverWindowLevel;
+                break;
+            default:
+                NSLog(@"        level: NSNormalWindowLevel");
                 break;
         }
         [window->nsWindow setLevel:level];
