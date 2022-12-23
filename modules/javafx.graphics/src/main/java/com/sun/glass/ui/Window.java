@@ -458,6 +458,11 @@ public abstract class Window {
                                       float outputScaleX, float outputScaleY)
     {
         if (!PrismSettings.allowHiDPIScaling) return;
+
+        System.err.println("Window::notifyScaleChanged : " +
+                "platformScales " + platformScaleX + "," + platformScaleY + "  " +
+                "outputScales " + outputScaleX + "," + outputScaleY);
+
         this.platformScaleX = platformScaleX;
         this.platformScaleY = platformScaleY;
         this.outputScaleX = outputScaleX;

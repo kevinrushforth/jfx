@@ -182,6 +182,8 @@ public class WindowStage extends GlassStage {
             if (modality != Modality.NONE) {
                 windowMask |= Window.MODAL;
             }
+            // KCR: FIXME: debugging
+            System.err.println("initPlatformWindow: ownerWindow = " + ownerWindow);
             platformWindow =
                     app.createWindow(ownerWindow, Screen.getMainScreen(), windowMask);
             platformWindow.setResizable(resizable);
@@ -297,6 +299,10 @@ public class WindowStage extends GlassStage {
                                     float xGravity, float yGravity,
                                     float renderScaleX, float renderScaleY)
     {
+        // KCR: FIXME: debugging
+        System.err.println("KCR: WindowStage::setBounds  this: " + this);
+        System.err.println("  renderScaleX: " + renderScaleX + "  renderScaleY: " + renderScaleY);
+        System.err.println("  x: " + x + "  y: " + y + "  w: " + w + "  h: " + h + "  cw: " + cw + "  ch: " + ch);
         if (renderScaleX > 0.0 || renderScaleY > 0.0) {
             // We set the render scale first since the call to setBounds()
             // below can induce a recursive update on the scales if it moves
@@ -316,6 +322,8 @@ public class WindowStage extends GlassStage {
             }
         }
         if (xSet || ySet || w > 0 || h > 0 || cw > 0 || ch > 0) {
+            // KCR: FIXME: debugging
+            System.err.println("calling platformWindow.setBounds");
             platformWindow.setBounds(x, y, xSet, ySet, w, h, cw, ch, xGravity, yGravity);
         }
     }

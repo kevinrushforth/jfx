@@ -66,6 +66,7 @@ import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
 
 import com.sun.javafx.stage.PopupWindowHelper;
 import com.sun.javafx.stage.WindowHelper;
+import com.sun.javafx.tk.TKStage;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -440,6 +441,8 @@ public abstract class PopupWindow extends Window {
     public void show(Window ownerWindow, double anchorX, double anchorY) {
         validateOwnerWindow(ownerWindow);
 
+        // KCR: FIXME: debugging
+        System.err.println("PopupWindow::show  anchorX: " + anchorX + "  anchorY: " + anchorY);
         // KCR: FIXME: passing in ownerWindow might not be needed
         updateWindow(ownerWindow, anchorX, anchorY);
         showImpl(ownerWindow);
@@ -756,13 +759,41 @@ public abstract class PopupWindow extends Window {
         double anchorScrMinX = newAnchorX - anchorDeltaX;
         double anchorScrMinY = newAnchorY - anchorDeltaY;
 
+        // KCR: FIXME: debugging
+        System.err.println();
+        System.err.println("KCR: PopupWindow::updateWindow : ownerWindow: " + ownerWindow);
+        System.err.println("  autofixActive: " + autofixActive);
+        System.err.println("  newAnchorX: " + newAnchorX + "  newAnchorY: " + newAnchorY);
+        System.err.println("  anchorXCoef: " + anchorXCoef + "  anchorYCoef: " + anchorYCoef);
+        System.err.println("  anchorXCoef: " + anchorXCoef + "  anchorYCoef: " + anchorYCoef);
+        System.err.println("  anchorScrMinX: " + anchorScrMinX + "  anchorScrMinY: " + anchorScrMinY);
+        System.err.println("  anchorBounds: " + anchorBounds);
+
+        TKStage peer = this.getPeer();
+        System.err.println("  peer: " + peer);
+        if (peer != null) {
+            System.err.println("    platformScale: " + peer.getPlatformScaleX() + "," + peer.getPlatformScaleY());
+            System.err.println("    outputScale: " + peer.getOutputScaleX()+ "," + peer.getOutputScaleY());
+        }
+        TKStage ownerPeer = ownerWindow != null ? ownerWindow.getPeer() : null;
+        System.err.println("  ownerPeer: " + ownerPeer);
+        if (ownerPeer != null) {
+            System.err.println("    platformScale: " + ownerPeer.getPlatformScaleX() + "," + ownerPeer.getPlatformScaleY());
+            System.err.println("    outputScale: " + ownerPeer.getOutputScaleX()+ "," + ownerPeer.getOutputScaleY());
+        }
+
+        // KCR: handle multi-screen case where popup might be using the screen
+        // scale of a different screen
         if (autofixActive) {
             final Screen currentScreen =
                     Utils.getScreenForPoint(newAnchorX, newAnchorY);
+            System.err.println("  currentScreen: " + currentScreen
+                    + "  isPrimary: " + (Screen.getPrimary().equals(currentScreen)));
             final Rectangle2D screenBounds =
                     Utils.hasFullScreenStage(currentScreen)
                             ? currentScreen.getBounds()
                             : currentScreen.getVisualBounds();
+            System.err.println("  screenBounds: " + screenBounds);
 
             if (anchorXCoef <= 0.5) {
                 // left side of the popup is more important, try to keep it
@@ -800,6 +831,18 @@ public abstract class PopupWindow extends Window {
         final double windowScrMinY =
                 anchorScrMinY - anchorBounds.getMinY()
                               + extendedBounds.getMinY();
+
+        // KCR: FIXME: remove the following (it is ineffective and not the right fix anyway)
+        if (peer != null && ownerPeer != null) {
+            if (peer.getPlatformScaleX() != ownerPeer.getPlatformScaleX()
+                    || peer.getPlatformScaleY() != peer.getPlatformScaleY()) {
+
+                System.err.println("  *** SCALES ARE DIFFERENT, MAY NEED TO ADJUST POSITION!!");
+//                // NOTE: the following is a hack, and won't work
+//                windowScrMinX *= ownerPeer.getPlatformScaleX() / peer.getPlatformScaleX();
+//                windowScrMinY *= ownerPeer.getPlatformScaleY() / peer.getPlatformScaleY();
+            }
+        }
 
         // update popup dimensions
         setWidth(extendedBounds.getWidth());
