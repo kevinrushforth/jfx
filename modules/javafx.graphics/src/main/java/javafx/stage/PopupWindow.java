@@ -419,7 +419,8 @@ public abstract class PopupWindow extends Window {
             treeShowingExpression.addListener(weakOwnerNodeListener);
         }
 
-        updateWindow(anchorX, anchorY);
+        // KCR: FIXME: passing in ownerWindow might not be needed
+        updateWindow(newOwnerWindow, anchorX, anchorY);
         showImpl(newOwnerWindow);
     }
 
@@ -439,7 +440,8 @@ public abstract class PopupWindow extends Window {
     public void show(Window ownerWindow, double anchorX, double anchorY) {
         validateOwnerWindow(ownerWindow);
 
-        updateWindow(anchorX, anchorY);
+        // KCR: FIXME: passing in ownerWindow might not be needed
+        updateWindow(ownerWindow, anchorX, anchorY);
         showImpl(ownerWindow);
     }
 
@@ -734,6 +736,14 @@ public abstract class PopupWindow extends Window {
 
     private void updateWindow(final double newAnchorX,
                               final double newAnchorY) {
+        // KCR: FIXME: passing in ownerWindow might not be needed
+        updateWindow(getOwnerWindow(), newAnchorX, newAnchorY);
+    }
+
+    // KCR: FIXME: passing in ownerWindow might not be needed
+    private void updateWindow(Window ownerWindow,
+                              final double newAnchorX,
+                              final double newAnchorY) {
         final AnchorLocation anchorLocationValue = getAnchorLocation();
         final Parent rootNode = getScene().getRoot();
         final Bounds extendedBounds = getExtendedBounds();
@@ -909,7 +919,10 @@ public abstract class PopupWindow extends Window {
 
     private boolean autofixActive;
     private void handleAutofixActivation(final boolean visible,
-                                         final boolean autofix) {
+                                         boolean autofix) {
+        if (Utils.isOverridePopupAutoFix()) {
+            autofix = Utils.isPopupAutoFix();
+        }
         final boolean newAutofixActive = visible && autofix;
         if (autofixActive != newAutofixActive) {
             autofixActive = newAutofixActive;

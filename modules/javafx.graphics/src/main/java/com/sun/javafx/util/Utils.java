@@ -54,6 +54,26 @@ import com.sun.prism.impl.PrismSettings;
  */
 public class Utils {
 
+    private static final boolean overridePopupAutoFix;
+    private static final boolean popupAutoFix;
+
+    static {
+        overridePopupAutoFix = System.getProperty("com.sun.javafx.popup.autofix") != null;
+        popupAutoFix = Boolean.getBoolean("com.sun.javafx.popup.autofix");
+
+        if (overridePopupAutoFix) {
+            System.err.println("Forcing autoFix=" + popupAutoFix + " for all popup windows");
+        }
+    }
+
+    public static boolean isOverridePopupAutoFix() {
+        return overridePopupAutoFix;
+    }
+
+    public static boolean isPopupAutoFix() {
+        return popupAutoFix;
+    }
+
     /***************************************************************************
      *                                                                         *
      * Math-related utilities                                                  *
@@ -462,6 +482,9 @@ public class Utils {
             double anchorHeight, HPos hpos, VPos vpos, double dx, double dy,
             boolean reposition)
     {
+        if (isOverridePopupAutoFix()) {
+            reposition = isPopupAutoFix();
+        }
         final Bounds parentBounds = getBounds(parent);
         Scene scene = parent.getScene();
         NodeOrientation orientation = parent.getEffectiveNodeOrientation();
