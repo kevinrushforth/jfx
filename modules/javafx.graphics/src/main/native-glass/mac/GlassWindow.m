@@ -228,6 +228,7 @@ GLASS_NS_WINDOW_IMPLEMENTATION
      * descendants created.  Without it, the menu  will
      * not be seen by the assistive technology.
      */
+    // KCR: Check this to see whether it is affected by my change
     __block BOOL ignored = [super accessibilityIsIgnored];
     NSArray* children = [self accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
     if (children) {
@@ -283,11 +284,14 @@ GLASS_NS_WINDOW_IMPLEMENTATION
     from = self->fullscreenWindow ? self->fullscreenWindow : self->nsWindow;
     to = fsWindow ? fsWindow : self->nsWindow;
 
+    // KCR: FIXME -- we will need to get a Glass Window here, which might
+    // not be available for the full screen window itself
     NSArray * children = [from childWindows];
     for (NSUInteger i=0; i<[children count]; i++)
     {
         NSWindow *child = (NSWindow*)[children objectAtIndex:i];
         if ([[child delegate] isKindOfClass: [GlassWindow class]]) {
+            // KCR: FIXME
             [from removeChildWindow: child];
             [to addChildWindow:child ordered:NSWindowAbove];
         }
@@ -449,7 +453,9 @@ static jlong _createWindowCommonDo(JNIEnv *env, jobject jWindow, jlong jOwnerPtr
 
         if (jOwnerPtr != 0L)
         {
-            window->owner = getGlassWindow(env, jOwnerPtr)->nsWindow; // not retained (use weak reference?)
+            // KCR
+            window->ownerWindow = getGlassWindow(env, jOwnerPtr);
+            window->owner = window->ownerWindow->nsWindow; // not retained (use weak reference?)
         }
         window->isResizable = NO;
         window->isDecorated = (jStyleMask&com_sun_glass_ui_Window_TITLED) != 0;
@@ -647,15 +653,21 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacWindow__1setLevel
     GLASS_ASSERT_MAIN_JAVA_THREAD(env);
     GLASS_POOL_ENTER;
     {
+        NSLog(@"MacWindow::setLevel");
         GlassWindow *window = getGlassWindow(env, jPtr);
         NSInteger level = NSNormalWindowLevel;
         switch (jLevel)
         {
             case com_sun_glass_ui_Window_Level_FLOATING:
                 level = NSFloatingWindowLevel;
+                NSLog(@"        level: NSFloatingWindowLevel");
                 break;
             case com_sun_glass_ui_Window_Level_TOPMOST:
+                NSLog(@"        level: NSScreenSaverWindowLevel");
                 level = NSScreenSaverWindowLevel;
+                break;
+            default:
+                NSLog(@"        level: NSNormalWindowLevel");
                 break;
         }
         [window->nsWindow setLevel:level];
@@ -1188,6 +1200,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_mac_MacWindow__1setVisible
             if (window->owner != nil)
             {
                 LOG("   removeChildWindow: %p", window);
+                // KCR: FIXME
                 [window->owner removeChildWindow:window->nsWindow];
             }
             [window->nsWindow orderOut:window->nsWindow];
