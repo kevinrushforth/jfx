@@ -455,12 +455,15 @@ jcharArray GetJavaKeyChars(JNIEnv *env, NSEvent *event)
     if (needChars == NO)
     {
         // Return an empty array instead of NULL
-        return (*env)->NewCharArray(env, 0);
+        jcharArray jcArr = (*env)->NewCharArray(env, 0);
+        GLASS_CHECK_EXCEPTION(env);
+        return jcArr;
     }
 
     jchar jc[16];
     [chars getCharacters:jc range:NSMakeRange(0, [chars length])];
     jcharArray jChars = (*env)->NewCharArray(env, (jsize)[chars length]);
+    GLASS_CHECK_EXCEPTION(env);
     (*env)->SetCharArrayRegion(env, jChars, 0, (jsize)[chars length], jc);
     GLASS_CHECK_EXCEPTION(env);
     return jChars;

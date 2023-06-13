@@ -84,6 +84,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacCursor__1initIDs
             return;
         }
         jSizeInit = (*env)->GetMethodID(env, cls, "<init>", "(II)V");
+        GLASS_CHECK_EXCEPTION(env);
     }
 
     NSString *base = @"/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/Resources/cursors";
@@ -149,6 +150,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_glass_ui_mac_MacCursor__1createCursor
     {
         NSImage *image = NULL;
         (*env)->CallVoidMethod(env, jPixels, jPixelsAttachData, ptr_to_jlong(&image));
+        GLASS_CHECK_EXCEPTION(env);
         if (image != NULL)
         {
             NSCursor *cursor = [[NSCursor alloc] initWithImage:image hotSpot:NSMakePoint(x, y)];

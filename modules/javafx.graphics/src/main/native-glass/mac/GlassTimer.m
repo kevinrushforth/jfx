@@ -134,6 +134,7 @@ CVReturn CVOutputCallback(CVDisplayLinkRef displayLink,
             if (timer->_runnable != NULL)
             {
                 (*timer->_env)->CallVoidMethod(timer->_env, timer->_runnable, jRunnableRun);
+                GLASS_CHECK_EXCEPTION(timer->_env);
             }
 
             if (timer->_paused == YES)

@@ -249,6 +249,7 @@ static inline void SetNSPasteboardItemValueForUtf(JNIEnv *env, NSPasteboardItem 
         NSString *string = nil;
         {
             const jchar *chars = (*env)->GetStringChars(env, jValue, NULL);
+            GLASS_CHECK_EXCEPTION(env);
             // 'string' must never be nil
             string = [NSString stringWithCharacters:(UniChar *)chars length:(NSUInteger)(*env)->GetStringLength(env, jValue)];
             (*env)->ReleaseStringChars(env, jValue, chars);
@@ -265,6 +266,7 @@ static inline void SetNSPasteboardItemValueForUtf(JNIEnv *env, NSPasteboardItem 
         {
             NSImage *image = NULL;
             (*env)->CallVoidMethod(env, jValue, jPixelsAttachData, ptr_to_jlong(&image));
+            GLASS_CHECK_EXCEPTION(env);
             if (image != NULL)
             {
                 NSData *data = [image TIFFRepresentation];
@@ -276,6 +278,7 @@ static inline void SetNSPasteboardItemValueForUtf(JNIEnv *env, NSPasteboardItem 
         {
             NSPoint offset = NSZeroPoint;
             jbyte *array =  (*env)->GetByteArrayElements(env, jValue, 0);
+            GLASS_CHECK_EXCEPTION(env);
             if (array != nil) {
                 if (sizeof(array) == sizeof(jint) * 2) {
                     jint x = CFSwapInt32BigToHost(((jint *)array)[0]);
@@ -292,6 +295,7 @@ static inline void SetNSPasteboardItemValueForUtf(JNIEnv *env, NSPasteboardItem 
             NSData *data = nil;
             {
                 jbyte *bytes = (*env)->GetByteArrayElements(env, jValue, NULL);
+                GLASS_CHECK_EXCEPTION(env);
                 // 'data' must never be nil
                 data = [NSData dataWithBytes:bytes length:(NSUInteger)(*env)->GetArrayLength(env, jValue)];
                 (*env)->ReleaseByteArrayElements(env, jValue, bytes, 0);
@@ -308,20 +312,25 @@ static inline NSPasteboardItem *NSPasteboardItemFromArray(JNIEnv *env, jobjectAr
     NSPasteboardItem *item = [[[NSPasteboardItem alloc] init] autorelease];
     {
         jsize repsCount = (*env)->GetArrayLength(env, jArray);
+        GLASS_CHECK_EXCEPTION(env);
         //NSLog(@"        NSPasteboardItemFromArray repsCount: %d", repsCount);
         if (repsCount > 0)
         {
             for (int i=0; i<repsCount; i++)
             {
                 jobjectArray jRepresentation = (*env)->GetObjectArrayElement(env, jArray, i);
+                GLASS_CHECK_EXCEPTION(env);
                 if ((*env)->GetArrayLength(env, jRepresentation) == 2)
                 {
                     jstring jUtf = (*env)->GetObjectArrayElement(env, jRepresentation, com_sun_glass_ui_mac_MacPasteboard_UtfIndex);
+                    GLASS_CHECK_EXCEPTION(env);
                     jobject jObject = (*env)->GetObjectArrayElement(env, jRepresentation, com_sun_glass_ui_mac_MacPasteboard_ObjectIndex);
+                    GLASS_CHECK_EXCEPTION(env);
 
                     NSString *utf = nil;
                     {
                         const jchar *chars = (*env)->GetStringChars(env, jUtf, NULL);
+                        GLASS_CHECK_EXCEPTION(env);
                         jsize length = (*env)->GetStringLength(env, jUtf);
                         if (length > 0)
                         {
@@ -447,6 +456,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_glass_ui_mac_MacPasteboard__1createUserPast
         NSString *name = nil;
         {
             const jchar *chars = (*env)->GetStringChars(env, jName, NULL);
+            GLASS_CHECK_EXCEPTION(env);
             jsize length = (*env)->GetStringLength(env, jName);
             if (length > 0)
             {
@@ -668,6 +678,7 @@ JNIEXPORT jstring JNICALL Java_com_sun_glass_ui_mac_MacPasteboard__1getItemStrin
             NSString *utf = nil;
             {
                 const jchar *chars = (*env)->GetStringChars(env, jUtf, NULL);
+                GLASS_CHECK_EXCEPTION(env);
                 jsize length = (*env)->GetStringLength(env, jUtf);
                 if (length > 0)
                 {

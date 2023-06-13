@@ -166,6 +166,7 @@ do {                                                                            
         if ((pthread_main_np() == 0) && (jEnv == NULL)) { \
                 GLASS_CHECK_EXCEPTION(env); \
                 jclass newExcCls = (*env)->FindClass(env, "java/lang/RuntimeException"); \
+                GLASS_CHECK_EXCEPTION(env); \
                 if (newExcCls != 0) { \
                         (*env)->ThrowNew(env, newExcCls, "Main Java thread is detached."); \
                 } \

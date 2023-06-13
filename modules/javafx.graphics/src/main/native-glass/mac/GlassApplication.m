@@ -484,6 +484,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
         else
         {
             jmethodID setEventThreadMID = (*jEnv)->GetMethodID(jEnv, cls, "setEventThread", "()V");
+            GLASS_CHECK_EXCEPTION(jEnv);
             if (!setEventThreadMID)
             {
                 NSLog(@"ERROR: can't get MacApplication.setEventThread() method ID");
@@ -506,6 +507,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
             if (appName) {
                 // make the name available to Java side, before Launchable.fnishLaunching callback
                 jstring jname = (*jEnv)->NewStringUTF(jEnv, [appName UTF8String]);
+                GLASS_CHECK_EXCEPTION(jEnv);
                 jmethodID setNameMethod = (*jEnv)->GetMethodID(jEnv, cls, "setName", "(Ljava/lang/String;)V");
                 GLASS_CHECK_EXCEPTION(jEnv);
                 if (setNameMethod != NULL) {
@@ -615,6 +617,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
             if (BooleanClass != 0)
             {
                 jmethodID getBooleanMethod = (*jEnv)->GetStaticMethodID(jEnv, BooleanClass, "getBoolean", "(Ljava/lang/String;)Z");
+                GLASS_CHECK_EXCEPTION(jEnv);
                 if (getBooleanMethod != 0)
                 {
                     jstring flag = (*jEnv)->NewStringUTF(jEnv, "glassload.verbose");
@@ -739,6 +742,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
     GET_MAIN_JENV;
     (*env)->CallStaticVoidMethod(env, jApplicationClass,
             javaIDs.Application.leaveNestedEventLoop, (jobject)NULL);
+    GLASS_CHECK_EXCEPTION(env);
 }
 
 + (void)registerKeyEvent:(NSEvent*)event
@@ -800,6 +804,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1initIDs
         NSLog(@"ERROR: macOS version is %d.%d, which is below the minimum of %d.%d",
               (int)osVerMajor, (int)osVerMinor, MACOS_MIN_VERSION_MAJOR, MACOS_MIN_VERSION_MINOR);
         jclass exceptionClass = (*env)->FindClass(env, "java/lang/RuntimeException");
+        GLASS_CHECK_EXCEPTION(env);
         if (exceptionClass != 0) {
             (*env)->ThrowNew(env, exceptionClass, "Unsupported macOS version");
         }

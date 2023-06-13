@@ -77,6 +77,7 @@ static volatile jobject glassClassLoader = NULL;
     }
 
     jstring classNameStr = (*env)->NewStringUTF(env, className);
+    if ((*env)->ExceptionCheck(env)) return NULL;
     if (classNameStr == NULL)
     {
         NSLog(@"GlassHelper error: classNameStrs == NULL");

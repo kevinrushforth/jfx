@@ -170,6 +170,7 @@ static jfieldID  jPixelsScaleYField = 0;
         if (env != NULL)
         {
             (*env)->CallVoidMethod(env, self->jCallback, jMenuActionMethod, NULL);
+            GLASS_CHECK_EXCEPTION(env);
         }
     }
 }
@@ -182,7 +183,9 @@ static jfieldID  jPixelsScaleYField = 0;
     if (env != NULL)
     {
         jobject jmenu = (*env)->GetObjectField(env, jDelegate, jDelegateMenuField);
+        GLASS_CHECK_EXCEPTION(env);
         (*env)->CallVoidMethod(env, jmenu, jMenuOpeningMethod, NULL);
+        GLASS_CHECK_EXCEPTION(env);
     }
 }
 
@@ -192,7 +195,9 @@ static jfieldID  jPixelsScaleYField = 0;
     if (env != NULL)
     {
         jobject jmenu = (*env)->GetObjectField(env, jDelegate, jDelegateMenuField);
+        GLASS_CHECK_EXCEPTION(env);
         (*env)->CallVoidMethod(env, jmenu, jMenuClosedMethod, NULL);
+        GLASS_CHECK_EXCEPTION(env);
     }
 }
 
@@ -206,6 +211,7 @@ static jfieldID  jPixelsScaleYField = 0;
     {
         GlassMenu *glassTargetItem = (GlassMenu *)[menuItem target];
         (*env)->CallVoidMethod(env, self->jCallback, jMenuValidateMethod, NULL);
+        GLASS_CHECK_EXCEPTION(env);
 
         return ([glassTargetItem->item isEnabled]);
     }
@@ -264,6 +270,7 @@ static jfieldID  jPixelsScaleYField = 0;
         pixels = (*env)->NewGlobalRef(env, pixels);
         NSImage *image = NULL;
         (*env)->CallVoidMethod(env, pixels, jPixelsAttachData, ptr_to_jlong(&image));
+        GLASS_CHECK_EXCEPTION(env);
         if (image != NULL)
         {
             if (jPixelsWidthField

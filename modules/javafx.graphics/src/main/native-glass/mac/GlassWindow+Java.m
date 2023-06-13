@@ -66,6 +66,7 @@ extern NSSize maxScreenDimensions;
 
         GET_MAIN_JENV;
         (*env)->CallVoidMethod(env, jWindow, jWindowNotifyMoveToAnotherScreen, createJavaScreen(env, newScreen));
+        GLASS_CHECK_EXCEPTION(env);
     }
 }
 
@@ -73,6 +74,7 @@ extern NSSize maxScreenDimensions;
 {
     GET_MAIN_JENV;
     (*env)->CallVoidMethod(env, jWindow, jWindowNotifyScaleChanged, 1.0f, 1.0f, newScale, newScale);
+    GLASS_CHECK_EXCEPTION(env);
 }
 
 - (void)_sendJavaWindowMoveEventForFrame:(NSRect)frame
@@ -85,6 +87,7 @@ extern NSSize maxScreenDimensions;
 
         (*env)->CallVoidMethod(env, jWindow, jWindowNotifyMove,
             (int)frame.origin.x,  (int)frame.origin.y, [self->nsWindow isZoomed]);
+        GLASS_CHECK_EXCEPTION(env);
         [self _sendJavaWindowMoveToAnotherScreenEventIfNeeded];
     }
 }
@@ -103,6 +106,7 @@ extern NSSize maxScreenDimensions;
 
         (*env)->CallVoidMethod(env, jWindow, jWindowNotifyResize, type,
              (int)frame.size.width, (int)frame.size.height);
+        GLASS_CHECK_EXCEPTION(env);
         [self _sendJavaWindowMoveToAnotherScreenEventIfNeeded];
     }
 }
@@ -175,6 +179,7 @@ extern NSSize maxScreenDimensions;
 
     GET_MAIN_JENV;
     (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocusUngrab);
+    GLASS_CHECK_EXCEPTION(env);
 
     s_grabWindow = nil;
 }

@@ -387,6 +387,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_mac_MacAccessible__1initEnum
     NSString *valuesSignature = [NSString stringWithFormat: @"()[Lcom/sun/glass/ui/mac/MacAccessible$%@;", enumName];
 
     jclass jEnumClass = (*env)->FindClass(env, [className UTF8String]);
+    if ((*env)->ExceptionCheck(env)) return FALSE;
     if (jEnumClass == NULL) return FALSE;
     jmethodID jValues = (*env)->GetStaticMethodID(env, jEnumClass, "values", [valuesSignature UTF8String]);
     if ((*env)->ExceptionCheck(env)) return FALSE;
@@ -405,6 +406,7 @@ JNIEXPORT jboolean JNICALL Java_com_sun_glass_ui_mac_MacAccessible__1initEnum
     NSString *customNamePrefix = @"AX";
     while (i < length) {
         jobject value = (*env)->GetObjectArrayElement(env, values, i++);
+        if ((*env)->ExceptionCheck(env)) return FALSE;
         jstring name = (jstring)(*env)->CallObjectMethod(env, value, jToString);
         if ((*env)->ExceptionCheck(env)) return FALSE;
         NSString* nsName = jStringToNSString(env, name);
@@ -529,6 +531,7 @@ JNIEXPORT jobject JNICALL Java_com_sun_glass_ui_mac_MacAccessible_idToMacVariant
   (JNIEnv *env, jclass jClass, jlong id, jint type)
 {
     jobject jVariant = (*env)->NewObject(env, jVariantClass, jVariantInit);
+    if ((*env)->ExceptionCheck(env)) return NULL;
     if (jVariant == NULL) return NULL;
     (*env)->SetIntField(env, jVariant, jVariantType, type);
 

@@ -466,9 +466,11 @@ JNIEXPORT jobject JNICALL Java_com_sun_glass_ui_mac_MacRobot__1getScreenCapture
                 pixHeight = height;
             }
             jintArray pixelArray = (*env)->NewIntArray(env, (jsize)pixWidth * pixHeight);
+            GLASS_CHECK_EXCEPTION(env);
             if (pixelArray)
             {
                 jint *javaPixels = (jint*)(*env)->GetIntArrayElements(env, pixelArray, 0);
+                GLASS_CHECK_EXCEPTION(env);
                 if (javaPixels != NULL)
                 {
                     // create a graphics context around the Java int array

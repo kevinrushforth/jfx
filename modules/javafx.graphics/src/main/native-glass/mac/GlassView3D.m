@@ -146,6 +146,7 @@
     if (jproperties != NULL)
     {
         jobject sharedContextPtrKey = (*env)->NewStringUTF(env, "shareContextPtr");
+        GLASS_CHECK_EXCEPTION(env);
         jobject sharedContextPtrValue = (*env)->CallObjectMethod(env, jproperties, jMapGetMethod, sharedContextPtrKey);
         GLASS_CHECK_EXCEPTION(env);
         if (sharedContextPtrValue != NULL)
@@ -166,6 +167,7 @@
     if (jproperties != NULL)
     {
         jobject contextPtrKey = (*env)->NewStringUTF(env, "contextPtr");
+        GLASS_CHECK_EXCEPTION(env);
         jobject contextPtrValue = (*env)->CallObjectMethod(env, jproperties, jMapGetMethod, contextPtrKey);
         GLASS_CHECK_EXCEPTION(env);
         if (contextPtrValue != NULL)
@@ -489,12 +491,15 @@
             (*env)->CallVoidMethod(env, self->_delegate->jView, jViewNotifyKey,
                                    com_sun_glass_events_KeyEvent_PRESS,
                                    uch, jKeyChars, jModifiers);
+            GLASS_CHECK_EXCEPTION(env);
             (*env)->CallVoidMethod(env, self->_delegate->jView, jViewNotifyKey,
                                    com_sun_glass_events_KeyEvent_TYPED,
                                    uch, jKeyChars, jModifiers);
+            GLASS_CHECK_EXCEPTION(env);
             (*env)->CallVoidMethod(env, self->_delegate->jView, jViewNotifyKey,
                                    com_sun_glass_events_KeyEvent_RELEASE,
                                    uch, jKeyChars, jModifiers);
+            GLASS_CHECK_EXCEPTION(env);
             (*env)->DeleteLocalRef(env, jKeyChars);
 
             GLASS_CHECK_EXCEPTION(env);

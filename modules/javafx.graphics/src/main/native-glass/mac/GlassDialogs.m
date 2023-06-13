@@ -129,17 +129,21 @@
             for (int i = 0; i < itemCount; i++)
             {
                 jobject jFilter = (*env)->GetObjectArrayElement(env, jExtensionFilters, i);
+                GLASS_CHECK_EXCEPTION(env);
 
                 jstring jDescription = (*env)->CallObjectMethod(env, jFilter, javaIDs.ExtensionFilter.getDescription);
+                GLASS_CHECK_EXCEPTION(env);
                 [filterNames addObject:[GlassHelper nsStringWithJavaString:jDescription withEnv:env]];
 
                 jobjectArray jExtensions = (jobjectArray)(*env)->CallObjectMethod(env, jFilter, javaIDs.ExtensionFilter.extensionsToArray);
+                GLASS_CHECK_EXCEPTION(env);
                 NSUInteger extensionCount = (NSUInteger)(*env)->GetArrayLength(env, jExtensions);
                 NSMutableArray* extensions = [NSMutableArray arrayWithCapacity:extensionCount];
                 for (int j = 0; j < extensionCount; j++)
                 {
                     NSString* extension = [GlassHelper nsStringWithJavaString:(*env)->GetObjectArrayElement(env, jExtensions, j)
                                                                        withEnv:env];
+                    GLASS_CHECK_EXCEPTION(env);
                     [extensions addObject:[extension pathExtension]];
                 }
                 [filters addObject:extensions];
@@ -192,6 +196,7 @@ static jobject convertNSURLtoFile(JNIEnv *env, NSURL *url)
 #endif // VERBOSE
     NSData *data = [[url path] dataUsingEncoding:NSUTF16LittleEndianStringEncoding];
     jstring path = (*env)->NewString(env, (jchar *)[data bytes], data.length/2);
+    GLASS_CHECK_EXCEPTION(env);
 
     jobject ret = NULL;
 

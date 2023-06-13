@@ -236,6 +236,7 @@ static jint getSwipeDirFromEvent(NSEvent *theEvent)
 
         [[self->nsView window] setAcceptsMouseMovedEvents:YES];
         (*env)->CallVoidMethod(env, self->jView, jViewNotifyEvent, com_sun_glass_events_ViewEvent_ADD);
+        GLASS_CHECK_EXCEPTION(env);
     }
     else
     {
@@ -718,15 +719,17 @@ static jint getSwipeDirFromEvent(NSEvent *theEvent)
 }
 
 #define SEND_MODIFIER_KEY_EVENT_WITH_TYPE(type, vkCode) \
+    do { \
         (*env)->CallVoidMethod(env, self->jView, jViewNotifyKey, \
                 (type), \
                 (vkCode), \
-                jKeyChars, jModifiers);
+                jKeyChars, jModifiers); \
+        GLASS_CHECK_EXCEPTION(env); \
+    } while (0)
 
 #define SEND_MODIFIER_KEY_EVENT(mask, vkCode) \
     if (changedFlags & (mask)) { \
         SEND_MODIFIER_KEY_EVENT_WITH_TYPE(currentFlags & (mask) ? com_sun_glass_events_KeyEvent_PRESS : com_sun_glass_events_KeyEvent_RELEASE, vkCode); \
-        GLASS_CHECK_EXCEPTION(env); \
     }
 
 - (void)sendJavaModifierKeyEvent:(NSEvent *)theEvent
@@ -738,6 +741,7 @@ static jint getSwipeDirFromEvent(NSEvent *theEvent)
 
     GET_MAIN_JENV;
     jcharArray jKeyChars = (*env)->NewCharArray(env, 0);
+    GLASS_CHECK_EXCEPTION(env);
 
     SEND_MODIFIER_KEY_EVENT(NSShiftKeyMask,       com_sun_glass_events_KeyEvent_VK_SHIFT);
     SEND_MODIFIER_KEY_EVENT(NSControlKeyMask,     com_sun_glass_events_KeyEvent_VK_CONTROL);
@@ -943,6 +947,7 @@ static jint getSwipeDirFromEvent(NSEvent *theEvent)
             mask = com_sun_glass_ui_Clipboard_ACTION_NONE;
             break;
     }
+    GLASS_CHECK_EXCEPTION(env);
     [GlassDragSource setMask:mask];
 
     GLASS_CHECK_EXCEPTION(env);
@@ -1135,6 +1140,7 @@ static jstring convertNSStringToJString(id aString, int length)
         if (dataBytes != NULL) {
             [data getBytes:dataBytes length:length * 2];
             jStr = (*env)->NewString(env, dataBytes, length);
+            GLASS_CHECK_EXCEPTION(env);
             free(dataBytes);
         }
     } else {
@@ -1186,6 +1192,7 @@ static jstring convertNSStringToJString(id aString, int length)
             if (n == 2) {
                 jboolean isCopy;
                 jdouble *elems = (*env)->GetDoubleArrayElements(env, theArray, &isCopy);
+                GLASS_CHECK_EXCEPTION(env);
                 retVal = NSMakeRect((CGFloat)elems[0], (CGFloat)elems[1], 0, 0);
                 (*env)->ReleaseDoubleArrayElements(env, theArray, elems, 0);
                 (*env)->DeleteLocalRef(env, theArray);

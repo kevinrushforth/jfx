@@ -72,10 +72,12 @@
     {
         NSBeep();
         (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocusDisabled);
+        GLASS_CHECK_EXCEPTION(env);
         return;
     }
 
     (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocus, com_sun_glass_events_WindowEvent_FOCUS_GAINED);
+    GLASS_CHECK_EXCEPTION(env);
 
     if (self->menubar != nil)
     {
@@ -95,6 +97,7 @@
 
     GET_MAIN_JENV;
     (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocus, com_sun_glass_events_WindowEvent_FOCUS_LOST);
+    GLASS_CHECK_EXCEPTION(env);
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -118,6 +121,7 @@
     JNIEnv *env = jEnv;
     if (env != NULL) {
         (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyDestroy);
+        GLASS_CHECK_EXCEPTION(env);
     }
 }
 
@@ -191,6 +195,7 @@
     }
 
     (*env)->CallVoidMethod(env, jWindow, jWindowNotifyResize, com_sun_glass_events_WindowEvent_MAXIMIZE, (int)newFrame.size.width, (int)newFrame.size.height);
+    GLASS_CHECK_EXCEPTION(env);
 
     return YES;
 }
@@ -233,6 +238,7 @@
     {
         GET_MAIN_JENV;
         (*env)->CallVoidMethod(env, jWindow, jWindowNotifyClose);
+        GLASS_CHECK_EXCEPTION(env);
     }
 
     // it's up to app to decide if the window should be closed

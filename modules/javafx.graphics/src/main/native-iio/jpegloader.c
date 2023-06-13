@@ -191,7 +191,7 @@ static void resetStreamBuffer(JNIEnv *env, streamBufferPtr sb);
 static int initStreamBuffer(JNIEnv *env, streamBufferPtr sb) {
     /* Initialize a new buffer */
     jbyteArray hInputBuffer = (*env)->NewByteArray(env, STREAMBUF_SIZE);
-    if (hInputBuffer == NULL) {
+    if (checkAndClearException(env) || hInputBuffer == NULL) {
         return NOT_OK;
     }
     sb->bufferLength = (*env)->GetArrayLength(env, hInputBuffer);
@@ -443,7 +443,7 @@ static imageIODataPtr initImageioData(JNIEnv *env,
 #endif
 
     data->imageIOobj = (*env)->NewWeakGlobalRef(env, obj);
-    if (data->imageIOobj == NULL) {
+    if (checkAndClearException(env) || data->imageIOobj == NULL) {
         free(data);
         return NULL;
     }
@@ -590,6 +590,9 @@ sun_jpeg_output_message(j_common_ptr cinfo) {
     }
     // Create a new java string from the message
     string = (*env)->NewStringUTF(env, buffer);
+    if (checkAndClearException(env) || string == NULL) {
+        return;
+    }
 
     theObject = data->imageIOobj;
 
@@ -1174,7 +1177,7 @@ read_icc_profile(JNIEnv *env, j_decompress_ptr cinfo) {
     /* Allocate a Java byte array for assembled data */
 
     data = (*env)->NewByteArray(env, total_length);
-    if (data == NULL) {
+    if (checkAndClearException(env) || data == NULL) {
         ThrowByName(env,
                 "java/lang/OutOfMemoryError",
                 "Reading ICC profile");
