@@ -579,6 +579,125 @@ public class ScrollPane extends Control {
         return viewportBounds;
     }
 
+    /**
+     * Indicates whether the width of this {@code ScrollPane} is the width of
+     * the {@code content}.
+     * If {@code true}, the width of this {@code ScrollPane} is bound to the
+     * width of the content. In this mode, the content is not horizontally
+     * scrollable. A horizontal scrollbar will never be shown regardless of the
+     * width of the content or the state of other properties. If {@code false},
+     * the width of the {@code ScrollPane} is independent of the width of the
+     * content. In this mode, the content is horizontally scrollable.
+     *
+     * <p>If {@code useContentWidth} is {@code true}, the following properties
+     * are ignored:
+     *
+     * <ul>
+     * <li>fitToWidth</li>
+     * <li>hbarPolicy</li>
+     * <li>hmin, hmax, hvalue</li>
+     * <li>viewportBounds (x values)</li>
+     * <li>minViewportWidth</li>
+     * <li>prefViewportWidth</li>
+     * <li>pannanble (x direction)</li>
+     * </ul>
+     *
+     * @defaultValue false
+     *
+     * @since 22
+     */
+    private BooleanProperty useContentWidth;
+    public final void setUseContentWidth(boolean value) {
+        useContentWidthProperty().set(value);
+    }
+    public final boolean isUseContentWidth() {
+        return useContentWidth == null ? false : useContentWidth.get();
+    }
+    public final BooleanProperty useContentWidthProperty() {
+        if (useContentWidth == null) {
+            useContentWidth = new StyleableBooleanProperty(false) {
+                @Override public void invalidated() {
+                    pseudoClassStateChanged(USE_CONTENT_WIDTH_PSEUDOCLASS_STATE, get());
+                }
+
+                @Override
+                public CssMetaData<ScrollPane,Boolean> getCssMetaData() {
+                    return StyleableProperties.USE_CONTENT_WIDTH;
+                }
+
+                @Override
+                public Object getBean() {
+                    return ScrollPane.this;
+                }
+
+                @Override
+                public String getName() {
+                    return "useContentWidth";
+                }
+            };
+        }
+        return useContentWidth;
+    }
+
+    /**
+     * Indicates whether the height of this {@code ScrollPane} is the height of
+     * the {@code content}.
+     * If {@code true}, the height of this {@code ScrollPane} is bound to the
+     * height of the content. In this mode, the content is not vertically
+     * scrollable. A vertical scrollbar will never be shown regardless of the
+     * height of the content or the state of other properties. If {@code false},
+     * the height of the {@code ScrollPane} is independent of the height of the
+     * content. In this mode, the content is vertically scrollable.
+     *
+     * <p>If {@code useContentHeight} is {@code true}, the following properties
+     * are ignored:
+     *
+     * <ul>
+     * <li>fitToHeight</li>
+     * <li>vbarPolicy</li>
+     * <li>vmin, vmax, vvalue</li>
+     * <li>viewportBounds (y values)</li>
+     * <li>minViewportHeight</li>
+     * <li>prefViewportHeight</li>
+     * <li>pannanble (y direction)</li>
+     * </ul>
+     *
+     * @defaultValue false
+     *
+     * @since 22
+     */
+    private BooleanProperty useContentHeight;
+    public final void setUseContentHeight(boolean value) {
+        useContentHeightProperty().set(value);
+    }
+    public final boolean isUseContentHeight() {
+        return useContentHeight == null ? false : useContentHeight.get();
+    }
+    public final BooleanProperty useContentHeightProperty() {
+        if (useContentHeight == null) {
+            useContentHeight = new StyleableBooleanProperty(false) {
+                @Override public void invalidated() {
+                    pseudoClassStateChanged(USE_CONTENT_HEIGHT_PSEUDOCLASS_STATE, get());
+                }
+
+                @Override
+                public CssMetaData<ScrollPane,Boolean> getCssMetaData() {
+                    return StyleableProperties.USE_CONTENT_HEIGHT;
+                }
+
+                @Override
+                public Object getBean() {
+                    return ScrollPane.this;
+                }
+
+                @Override
+                public String getName() {
+                    return "useContentHeight";
+                }
+            };
+        }
+        return useContentHeight;
+    }
 
     /* *************************************************************************
      *                                                                         *
@@ -723,6 +842,36 @@ public class ScrollPane extends Control {
             }
         };
 
+        private static final CssMetaData<ScrollPane,Boolean> USE_CONTENT_WIDTH =
+            new CssMetaData<>("-fx-use-content-width",
+                BooleanConverter.getInstance(), Boolean.FALSE){
+
+            @Override
+            public boolean isSettable(ScrollPane n) {
+                return n.useContentWidth == null || !n.useContentWidth.isBound();
+            }
+
+            @Override
+            public StyleableProperty<Boolean> getStyleableProperty(ScrollPane n) {
+                return (StyleableProperty<Boolean>)n.useContentWidthProperty();
+            }
+        };
+
+        private static final CssMetaData<ScrollPane,Boolean> USE_CONTENT_HEIGHT =
+            new CssMetaData<>("-fx-use-content-height",
+                BooleanConverter.getInstance(), Boolean.FALSE){
+
+            @Override
+            public boolean isSettable(ScrollPane n) {
+                return n.useContentHeight == null || !n.useContentHeight.isBound();
+            }
+
+            @Override
+            public StyleableProperty<Boolean> getStyleableProperty(ScrollPane n) {
+                return (StyleableProperty<Boolean>)n.useContentHeightProperty();
+            }
+        };
+
         private static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES;
         static {
             final List<CssMetaData<? extends Styleable, ?>> styleables =
@@ -732,6 +881,8 @@ public class ScrollPane extends Control {
             styleables.add(FIT_TO_WIDTH);
             styleables.add(FIT_TO_HEIGHT);
             styleables.add(PANNABLE);
+            styleables.add(USE_CONTENT_WIDTH);
+            styleables.add(USE_CONTENT_HEIGHT);
             STYLEABLES = Collections.unmodifiableList(styleables);
         }
     }
@@ -761,6 +912,10 @@ public class ScrollPane extends Control {
             PseudoClass.getPseudoClass("fitToWidth");
     private static final PseudoClass FIT_TO_HEIGHT_PSEUDOCLASS_STATE =
             PseudoClass.getPseudoClass("fitToHeight");
+    private static final PseudoClass USE_CONTENT_WIDTH_PSEUDOCLASS_STATE =
+            PseudoClass.getPseudoClass("useContentWidth");
+    private static final PseudoClass USE_CONTENT_HEIGHT_PSEUDOCLASS_STATE =
+            PseudoClass.getPseudoClass("useContentHeight");
 
     /**
      * Returns the initial focus traversable state of this control, for use
