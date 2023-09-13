@@ -562,6 +562,7 @@ public final class WebPage {
     public void setBounds(int x, int y, int w, int h) {
         lockPage();
         try {
+//            System.err.println("KCR: WebPage::setBounds : " + x + " " + y + " " + w + " " + h);
             log.fine("setBounds: " + x + " " + y + " " + w + " " + h);
             if (isDisposed) {
                 log.fine("setBounds() request for a disposed web page.");
@@ -2165,6 +2166,7 @@ public final class WebPage {
     }
 
     private void fwkRepaint(int x, int y, int w, int h) {
+//        System.err.println("WebPage::fwkRepaint: " + x + " " + y + " " + w + " " + h);
         lockPage();
         try {
             if (paintLog.isLoggable(Level.FINEST)) {
@@ -2287,6 +2289,7 @@ public final class WebPage {
     }
 
     private void fwkSetWindowBounds(int x, int y, int w, int h) {
+//        System.err.println("KCR: WebPage::fwkSetWindowBounds : " + x + " " + y + " " + w + " " + h);
         log.finer("Set window bounds: " + x + " " + y + " " + w + " " + h);
 
         if (uiClient != null) {

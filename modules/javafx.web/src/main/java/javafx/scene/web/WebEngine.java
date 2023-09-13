@@ -1162,6 +1162,7 @@ final public class WebEngine {
         @Override public void addChild(Node child) {
             WebView view = getView();
             if (view != null) {
+//                System.err.println("KCR: WebEngine.Accessor::addChild: " + child);
                 view.getChildren().add(child);
             }
         }
@@ -1169,6 +1170,7 @@ final public class WebEngine {
         @Override public void removeChild(Node child) {
             WebView view = getView();
             if (view != null) {
+//                System.err.println("KCR: WebEngine.Accessor::removeChild: " + child);
                 view.getChildren().remove(child);
             }
         }

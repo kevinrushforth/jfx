@@ -43,6 +43,7 @@ import javafx.css.converter.ColorConverter;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.NodeOrientation;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -55,6 +56,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TransferMode;
+import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontSmoothingType;
 import javafx.stage.Stage;
@@ -80,12 +82,14 @@ import com.sun.javafx.tk.TKPulseListener;
 import com.sun.javafx.tk.Toolkit;
 import com.sun.javafx.webkit.InputMethodClientImpl;
 import com.sun.javafx.webkit.KeyCodeMap;
+import com.sun.javafx.webkit.theme.ScrollBarWidget;
 import com.sun.webkit.WebPage;
 import com.sun.webkit.event.WCFocusEvent;
 import com.sun.webkit.event.WCInputMethodEvent;
 import com.sun.webkit.event.WCKeyEvent;
 import com.sun.webkit.event.WCMouseEvent;
 import com.sun.webkit.event.WCMouseWheelEvent;
+import com.sun.webkit.graphics.WCSize;
 
 /**
  * {@code WebView} is a {@link javafx.scene.Node} that manages a
@@ -131,6 +135,34 @@ final public class WebView extends Parent {
     private final WebPage page;
     private final WebEngine engine;
     private volatile InputMethodClientImpl imClient;
+
+    private double contentWidth = -1;
+    private double contentHeight = -1;
+
+/*
+    private int treeDepth = 0;
+    private void printTree(Node n){
+        System.err.println("    ".repeat(treeDepth) + n);
+        treeDepth++;
+        if (n instanceof Parent p) {
+            p.getChildrenUnmodifiable()
+                    .stream()
+                    .forEach(this::printTree);
+        }
+        treeDepth--;
+    }
+
+    @Override
+    protected void layoutChildren() {
+        System.err.println("WebView::layoutChildren");
+        System.err.println("-----------------------");
+        printTree(this);
+        System.err.println("");
+        System.err.println("content size: " + contentWidth + " " + contentHeight);
+
+        super.layoutChildren();
+    }
+*/
 
     /**
      * The stage pulse listener registered with the toolkit.
@@ -262,6 +294,22 @@ final public class WebView extends Parent {
         return fontScale;
     }
 
+    private void computeScrollBarVisibility() {
+        getChildrenUnmodifiable()
+                .stream()
+                .filter(ScrollBarWidget.class::isInstance)
+                .map(ScrollBarWidget.class::cast)
+                .forEach(widget -> {
+                    if (widget.getOrientation() == Orientation.HORIZONTAL) {
+                        widget.setVisible(getPrefWidth() != USE_COMPUTED_SIZE);
+//                        System.err.println("KCR: computeScrollBarVisibility (horiz) : " + widget.isVisible());
+                    } else {
+                        widget.setVisible(getPrefHeight() != USE_COMPUTED_SIZE);
+//                        System.err.println("KCR: computeScrollBarVisibility (vert) : " + widget.isVisible());
+                    }
+                });
+    };
+
     {
         // To initialize the class helper at the begining each constructor of this class
         WebViewHelper.initHelper(this);
@@ -294,6 +342,11 @@ final public class WebView extends Parent {
         });
         setFocusTraversable(true);
         Toolkit.getToolkit().addStageTkPulseListener(stagePulseListener);
+
+        getChildren().subscribe(this::computeScrollBarVisibility);
+        prefWidthProperty().subscribe(this::computeScrollBarVisibility);
+        prefHeightProperty().subscribe(this::computeScrollBarVisibility);
+        computeScrollBarVisibility();
     }
 
     // Resizing support. Allows arbitrary growing and shrinking.
@@ -339,8 +392,15 @@ final public class WebView extends Parent {
      * @return the preferred width that this node should be resized to during layout
      */
     @Override public final double prefWidth(double height) {
+        /*
         final double result = getPrefWidth();
         return Double.isNaN(result) || result < 0 ? 0 : result;
+        */
+        final double override = getPrefWidth();
+        if (override == USE_COMPUTED_SIZE) {
+            return super.prefWidth(height);
+        }
+        return Double.isNaN(override) || override < 0 ? 0 : override;
     }
 
     /**
@@ -349,9 +409,47 @@ final public class WebView extends Parent {
      * @return the preferred height that this node should be resized to during layout
      */
     @Override public final double prefHeight(double width) {
+        /*
         final double result = getPrefHeight();
         return Double.isNaN(result) || result < 0 ? 0 : result;
+        */
+        final double override = getPrefHeight();
+        if (override == USE_COMPUTED_SIZE) {
+            return super.prefHeight(width);
+        }
+        return Double.isNaN(override) || override < 0 ? 0 : override;
     }
+
+    /**
+     * Computes the preferred width of this WebView.
+     *
+     * @param height ignored
+     * @return the computed preferred width
+     */
+    @Override protected double computePrefWidth(double height) {
+        final double w = contentWidth;
+        if (w == -1) {
+            return DEFAULT_PREF_WIDTH;
+        }
+
+        return w < 1 ? 1 : w;
+    }
+
+    /**
+     * Computes the preferred height of this WebView.
+     *
+     * @return the computed preferred height for this WebView
+     */
+    @Override protected double computePrefHeight(double width) {
+        final double h = contentHeight;
+        if (h == -1) {
+            return DEFAULT_PREF_HEIGHT;
+        }
+
+//        System.err.println("WebView::computePrefHeight: " + h);
+        return h < 1 ? 1 : h;
+    }
+
     /**
      * Called during layout to determine the maximum width for this node.
      *
@@ -470,7 +568,7 @@ final public class WebView extends Parent {
      */
     public DoubleProperty prefWidthProperty() {
         if (prefWidth == null) {
-            prefWidth = new StyleableDoubleProperty(DEFAULT_PREF_WIDTH) {
+            prefWidth = new StyleableDoubleProperty(USE_COMPUTED_SIZE) {
                 @Override
                 public void invalidated() {
                     if (getParent() != null) {
@@ -502,7 +600,7 @@ final public class WebView extends Parent {
     public final double getPrefWidth() {
         return (this.prefWidth != null)
                 ? this.prefWidth.get()
-                : DEFAULT_PREF_WIDTH;
+                : USE_COMPUTED_SIZE;
     }
 
     /**
@@ -511,7 +609,7 @@ final public class WebView extends Parent {
      */
     public DoubleProperty prefHeightProperty() {
         if (prefHeight == null) {
-            prefHeight = new StyleableDoubleProperty(DEFAULT_PREF_HEIGHT) {
+            prefHeight = new StyleableDoubleProperty(USE_COMPUTED_SIZE) {
                 @Override
                 public void invalidated() {
                     if (getParent() != null) {
@@ -543,7 +641,7 @@ final public class WebView extends Parent {
     public final double getPrefHeight() {
         return (this.prefHeight != null)
                 ? this.prefHeight.get()
-                : DEFAULT_PREF_HEIGHT;
+                : USE_COMPUTED_SIZE;
     }
 
     /**
@@ -933,7 +1031,7 @@ final public class WebView extends Parent {
                 = new CssMetaData<>(
                 "-fx-pref-width",
                 SizeConverter.getInstance(),
-                DEFAULT_PREF_WIDTH) {
+                USE_COMPUTED_SIZE) {
             @Override
             public boolean isSettable(WebView view) {
                 return view.prefWidth == null || !view.prefWidth.isBound();
@@ -948,7 +1046,7 @@ final public class WebView extends Parent {
                 = new CssMetaData<>(
                 "-fx-pref-height",
                 SizeConverter.getInstance(),
-                DEFAULT_PREF_HEIGHT) {
+                USE_COMPUTED_SIZE) {
             @Override
             public boolean isSettable(WebView view) {
                 return view.prefHeight == null || !view.prefHeight.isBound();
@@ -1050,6 +1148,14 @@ final public class WebView extends Parent {
                     NodeHelper.markDirty(this, DirtyBits.WEBVIEW_VIEW);
                 }
                 SceneHelper.setAllowPGAccess(false);
+                WCSize size = page.getContentSize(page.getMainFrame());
+//                System.err.println("KCR: page::getContentSize: " + size.getWidth() + " x " + size.getHeight());
+                if (contentWidth != size.getWidth() || contentHeight != size.getHeight()) {
+//                    System.err.println("*** content size changed, calling requestLayout()");
+                    contentWidth = size.getWidth();
+                    contentHeight = size.getHeight();
+                    requestLayout();
+                }
             }
         } else {
             page.dropRenderFrames();
@@ -1100,7 +1206,10 @@ final public class WebView extends Parent {
     }
 
     private void processScrollEvent(ScrollEvent ev) {
-        if (page == null) {
+        if (page == null ||
+                (getPrefHeight() == USE_COMPUTED_SIZE) &&
+                 getPrefWidth() == USE_COMPUTED_SIZE)
+        {
             return;
         }
         double dx = - ev.getDeltaX() * getFontScale() * getScaleX();
