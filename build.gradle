@@ -546,11 +546,17 @@ ext.IS_RELEASE = !ext.IS_DEBUG_JAVA
 defineProperty("MAVEN_PUBLISH", "false")
 ext.IS_MAVEN_PUBLISH = Boolean.parseBoolean(MAVEN_PUBLISH)
 
-// Defines the compiler warning levels to use. If empty, then no warnings are generated. If
-// not empty, then the expected syntax is as a space or comma separated list of names, such
-// as defined in the javac documentation.
-defineProperty("LINT", "none")
-ext.IS_LINT = LINT != "none"
+// Defines the compiler lint warnings to enable. This can be overriden on
+// the command line. If set to the empty string, then no lint warnings are
+// enabled; even module-specific lint options are disabled. If not empty,
+// then it is parsed as a space or comma separated list of names. See the
+// javac documentation for a list of valid lint options.
+
+def defaultLintOptions =
+        "removal" + "," +
+        "missing-explicit-ctor"
+defineProperty("LINT", defaultLintOptions)
+ext.IS_LINT = LINT != ""
 
 defineProperty("DOC_LINT", "all")
 ext.IS_DOC_LINT = DOC_LINT != ""
@@ -2155,6 +2161,10 @@ project(":base") {
     project.ext.includeSources = true
     project.ext.moduleRuntime = true
     project.ext.moduleName = "javafx.base"
+    // FIXME KCR: the following is just an example
+    project.ext.extraLintOptions =
+        "strictfp" + "," +
+        "lossy-conversions"
 
     sourceSets {
         main
@@ -4071,6 +4081,7 @@ allprojects {
         compile.options.warnings = IS_LINT
 
         compile.options.compilerArgs += ["-XDignore.symbol.file", "-encoding", "UTF-8"]
+        compile.options.compilerArgs += [ "-Xmaxerrs", "1000" ]
 
         // we use a custom javadoc command
         project.javadoc.enabled = false
@@ -4080,6 +4091,17 @@ allprojects {
             LINT.split("[, ]").each { s ->
                 compile.options.compilerArgs += "-Xlint:$s"
             }
+            compile.options.compilerArgs += [ "-Xmaxwarns", "1000" ]
+
+            if (project.hasProperty("extraLintOptions")) {
+                //def extraLintOptions = project.ext.extraLintOptions;
+                extraLintOptions.split("[, ]").each { s ->
+                    compile.options.compilerArgs += "-Xlint:$s"
+                }
+            }
+
+            // TODO: enable the following once we are lint clean
+            //compile.options.compilerArgs += "-Werror"
         }
     } // tasks with javaCompile
 
