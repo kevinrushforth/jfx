@@ -546,11 +546,14 @@ ext.IS_RELEASE = !ext.IS_DEBUG_JAVA
 defineProperty("MAVEN_PUBLISH", "false")
 ext.IS_MAVEN_PUBLISH = Boolean.parseBoolean(MAVEN_PUBLISH)
 
-// Defines the compiler lint warnings to enable. This can be overriden on
+// Define the compiler lint warnings to enable. They can be overriden on
 // the command line. If set to the empty string, then no lint warnings are
 // enabled; even module-specific lint options are disabled. If not empty,
 // then it is parsed as a space or comma separated list of names. See the
 // javac documentation for a list of valid lint options.
+
+// We define a separate set of options for normal classes, test classes
+// (including shims), and tool classes (including JSLC)
 
 def defaultLintOptions =
         "removal" + "," +
@@ -558,6 +561,15 @@ def defaultLintOptions =
 defineProperty("LINT", defaultLintOptions)
 ext.IS_LINT = LINT != ""
 
+def defaultToolLintOptions = ""
+defineProperty("TOOL_LINT", defaultToolLintOptions)
+ext.IS_TOOL_LINT = TOOL_LINT != ""
+
+def defaultTestLintOptions = ""
+defineProperty("TEST_LINT", defaultTestLintOptions)
+ext.IS_TEST_LINT = TEST_LINT != ""
+
+// Doclint options (all enabled by default)
 defineProperty("DOC_LINT", "all")
 ext.IS_DOC_LINT = DOC_LINT != ""
 
@@ -2164,7 +2176,7 @@ project(":base") {
     // FIXME KCR: the following is just an example
     project.ext.extraLintOptions =
         "strictfp" + "," +
-        "lossy-conversions"
+        "path"
 
     sourceSets {
         main
@@ -4050,6 +4062,20 @@ project(":systemTests") {
     addValidateSourceSets(project, nonModSrcSets, modSrcSets)
 }
 
+void setupLintOptions(Task compile, String lintOpts, String extraLintOpts) {
+    lintOpts.split("[, ]").each { s ->
+        compile.options.compilerArgs += "-Xlint:$s"
+    }
+
+    if (extraLintOpts != "") {
+        extraLintOpts.split("[, ]").each { s ->
+            compile.options.compilerArgs += "-Xlint:$s"
+        }
+    }
+
+    compile.options.compilerArgs += [ "-Xmaxwarns", "1000" ]
+}
+
 allprojects {
     // The following block is a workaround for the fact that presently Gradle
     // can't set the -XDignore.symbol.file flag, because it appears that the
@@ -4078,30 +4104,49 @@ allprojects {
 
         compile.options.forkOptions.executable = JAVAC
 
-        compile.options.warnings = IS_LINT
-
         compile.options.compilerArgs += ["-XDignore.symbol.file", "-encoding", "UTF-8"]
         compile.options.compilerArgs += [ "-Xmaxerrs", "1000" ]
 
         // we use a custom javadoc command
         project.javadoc.enabled = false
 
-        // Add in the -Xlint options
-        if (IS_LINT) {
-            LINT.split("[, ]").each { s ->
-                compile.options.compilerArgs += "-Xlint:$s"
-            }
-            compile.options.compilerArgs += [ "-Xmaxwarns", "1000" ]
+        if (compile.name == "compileJava" ||
+            compile.name == "compileFullJava" ||
+            compile.name.startsWith("compileJavaDOMBinding")) {
 
-            if (project.hasProperty("extraLintOptions")) {
-                //def extraLintOptions = project.ext.extraLintOptions;
-                extraLintOptions.split("[, ]").each { s ->
-                    compile.options.compilerArgs += "-Xlint:$s"
-                }
-            }
+            // Add in the -Xlint options
+            compile.options.warnings = IS_LINT
+            if (IS_LINT) {
+                def extraLintOpts = project.hasProperty("extraLintOptions") ?
+                                    project.ext.extraLintOptions : ""
+                setupLintOptions(compile, LINT, extraLintOpts);
 
-            // TODO: enable the following once we are lint clean
-            //compile.options.compilerArgs += "-Werror"
+                // TODO: enable the following once we are lint clean
+                //compile.options.compilerArgs += "-Werror"
+            }
+        } else if (compile.name == "compileJslcJava" ||
+            compile.name == "compileToolJava") {
+
+            // Add in the -Xlint options
+            compile.options.warnings = IS_TOOL_LINT
+            if (IS_TOOL_LINT) {
+                def extraLintOpts = project.hasProperty("extraToolLintOptions") ?
+                                    project.ext.extraToolLintOptions : ""
+                setupLintOptions(compile, TOOL_LINT, extraLintOpts);
+            }
+        } else if (compile.name == "compileShimsJava" ||
+            compile.name.startsWith("compileTest")) {
+
+            // Add in the -Xlint options
+            compile.options.warnings = IS_TEST_LINT
+            if (IS_TEST_LINT) {
+                def extraLintOpts = project.hasProperty("extraTestLintOptions") ?
+                                    project.ext.extraTestLintOptions : ""
+                setupLintOptions(compile, TEST_LINT, extraLintOpts);
+            }
+        } else {
+            logger.warn("Unknown compilation task: ${compile.name}")
+            compile.options.warnings = false
         }
     } // tasks with javaCompile
 
