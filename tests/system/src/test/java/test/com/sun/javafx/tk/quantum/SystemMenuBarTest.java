@@ -54,6 +54,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -213,6 +214,7 @@ public class SystemMenuBarTest {
         stage.show();
         final ArrayList<WeakReference<MenuBase>> uncollectedMenus = new ArrayList<>();
         GlassSystemMenuShim gsmh = new GlassSystemMenuShim();
+        assumeTrue("SystemMenu only supported on MacOS", gsmh.isSupported());
         Menu m1 = new Menu("Menu");
 
         MenuBase menuBase = GlobalMenuAdapter.adapt(m1);
@@ -229,7 +231,7 @@ public class SystemMenuBarTest {
             for (WeakReference<com.sun.glass.ui.Menu> wr : u2) {
                 if (!JMemoryBuddy.checkCollectable(wr)) {
                     strongCount++;
-                    assertTrue("Too much refs", strongCount < 2);
+                    assertTrue("Too many references", strongCount < 2);
                 }
             }
             assertEquals(1, strongCount, "Exactly one reference should be reachable");
@@ -346,5 +348,4 @@ public class SystemMenuBarTest {
             fail(throwableRef.get());
         }
     }
-
 }
