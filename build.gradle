@@ -942,7 +942,10 @@ List<String> computeLibraryPath(boolean working) {
         def modulesLibsDir = "${bundledSdkDir}/modules_libs"
 
         modsWithNative.each() { m ->
-            lp << cygpath("${modulesLibsDir}/javafx.${m}")
+            if (m.hasProperty("moduleName")) {
+                def moduleName = m.ext.moduleName
+                lp << cygpath("${modulesLibsDir}/${moduleName}")
+            }
         }
     } else {
         def platformPrefix = ""
@@ -1676,6 +1679,15 @@ void addMavenPublication(Project project, List<String> projectDependencies) {
         return
     }
 
+    if (!m.hasProperty("moduleName")) {
+        fail("Project ${m} has no module name")
+    }
+    projectDependencies.each { dep ->
+        if (!dep.hasProperty("moduleName")) {
+            fail("Project ${m} dependency ${dep} has no module name")
+        }
+    }
+
     project.apply plugin: 'maven-publish'
 
     project.group = MAVEN_GROUP_ID
@@ -1726,7 +1738,8 @@ void addMavenPublication(Project project, List<String> projectDependencies) {
         project.publishing {
             publications {
                 maven(MavenPublication) {
-                    artifactId = "javafx-${project.name}"
+                    def artifactName = project.moduleName.replace('.', '-')
+                    artifactId = artifactName
 
                     afterEvaluate {
                         artifact project.tasks."moduleEmptyPublicationJar$t.capital"
@@ -1745,15 +1758,16 @@ void addMavenPublication(Project project, List<String> projectDependencies) {
 
                         Node projectDependencyPlatform = dependencies.appendNode("dependency")
                         projectDependencyPlatform.appendNode("groupId", MAVEN_GROUP_ID)
-                        projectDependencyPlatform.appendNode("artifactId", "javafx-${project.name}")
+                        projectDependencyPlatform.appendNode("artifactId", artifactName)
                         projectDependencyPlatform.appendNode("version", MAVEN_VERSION)
                         projectDependencyPlatform.appendNode("classifier", "\${javafx.platform}")
 
                         if (!projectDependencies.empty) {
                             projectDependencies.each { dep ->
+                                def depName = dep.moduleName.replace('.', '-')
                                 Node projectDependency = dependencies.appendNode("dependency")
                                 projectDependency.appendNode("groupId", MAVEN_GROUP_ID)
-                                projectDependency.appendNode("artifactId", "javafx-$dep")
+                                projectDependency.appendNode("artifactId", depName)
                                 projectDependency.appendNode("version", MAVEN_VERSION)
                            }
                         }
@@ -2751,6 +2765,18 @@ project(":controls") {
 
     addValidateSourceSets(project, sourceSets)
 }
+
+// TODO: incubator: Add a project declaration for each incubator module here
+// BEGIN: incubator placeholder
+//project(":incubator.mymod") {
+//    project.ext.buildModule = true
+//    project.ext.includeSources = true
+//    project.ext.moduleRuntime = true
+//    project.ext.moduleName = "jfx.incubator.mymod"
+//    project.ext.incubating = true
+//    ...
+//}
+// END: incubator placeholder
 
 project(":swing") {
 
@@ -3863,7 +3889,21 @@ project(":systemTests") {
         testImplementation project(":swing").sourceSets.test.output
     }
 
-    def dependentProjects = [ 'base', 'graphics', 'controls', 'media', 'web', 'swing', 'fxml' ]
+    def dependentProjects = [
+        'base',
+        'graphics',
+        'controls',
+
+        // TODO: incubator: Add entry for each incubator module here
+        // BEGIN: incubator placeholder
+        //'incubator.mymod',
+        // END: incubator placeholder
+
+        'media',
+        'web',
+        'swing',
+        'fxml'
+    ]
     commonModuleSetup(project, dependentProjects)
 
     File testJavaPolicyFile = new File(rootProject.buildDir, TESTJAVAPOLICYFILE);
@@ -4243,8 +4283,21 @@ task javadoc(type: Javadoc, dependsOn: createMSPfile) {
     description = "Generates the JavaDoc for all the public API"
     executable = JAVADOC
     def projectsToDocument = [
-            project(":base"), project(":graphics"), project(":controls"), project(":media"),
-            project(":swing"), /*project(":swt"),*/ project(":fxml"), project(":web")]
+        project(":base"),
+        project(":graphics"),
+        project(":controls"),
+
+        // TODO: incubator: Add entry for each incubator module here
+        // BEGIN: incubator placeholder
+        //project(":incubator.mymod"),
+        // END: incubator placeholder
+
+        project(":media"),
+        project(":swing"),
+        /*project(":swt"),*/
+        project(":fxml"),
+        project(":web")
+    ]
     source(projectsToDocument.collect({
         [it.sourceSets.main.java]
     }));
@@ -5567,6 +5620,7 @@ compileTargets { t ->
                 def modnames = []
                 moduleProjList.each { project ->
                     if (project.hasProperty("moduleName") && project.buildModule) {
+                        def incubating = project.hasProperty("incubating") && project.ext.incubating
                         modnames << project.ext.moduleName
                         File dir;
                         if (project.sourceSets.hasProperty('shims')) {
@@ -5578,16 +5632,18 @@ compileTargets { t ->
                         def dstModuleDir = cygpath(dir.path)
                         modpath << "${dstModuleDir}"
 
-                        String themod = dir.toURI()
-                        testJavaPolicyFile <<  "grant codeBase \"${themod}\" {\n" +
-                        "    permission java.security.AllPermission;\n" +
-                        "};\n"
+                        if (!incubating) {
+                            String themod = dir.toURI()
+                            testJavaPolicyFile <<  "grant codeBase \"${themod}\" {\n" +
+                            "    permission java.security.AllPermission;\n" +
+                            "};\n"
 
-                        dir = new File(rootProject.buildDir, "sdk/lib/${project.ext.moduleName}.jar")
-                        themod = dir.toURI()
-                        runJavaPolicyFile <<  "grant codeBase \"${themod}\" {\n" +
-                        "    permission java.security.AllPermission;\n" +
-                        "};\n"
+                            dir = new File(rootProject.buildDir, "sdk/lib/${project.ext.moduleName}.jar")
+                            themod = dir.toURI()
+                            runJavaPolicyFile <<  "grant codeBase \"${themod}\" {\n" +
+                            "    permission java.security.AllPermission;\n" +
+                            "};\n"
+                        }
                     }
                 }
 
@@ -5633,6 +5689,8 @@ compileTargets { t ->
             def jmodName = "${moduleName}.jmod"
             def jmodFile = "${jmodsDir}/${jmodName}"
 
+            def incubating = project.hasProperty("incubating") && project.ext.incubating
+
             // On Windows, copy the native libraries in the jmod image
             // to a "javafx" subdir to avoid conflicting with the Microsoft
             // DLLs that are shipped with the JDK
@@ -5673,6 +5731,10 @@ compileTargets { t ->
                         args(srcLegalDir)
                         if (sourceDateEpoch != null) {
                             args("--date", extendedTimestamp)
+                        }
+                        if (incubating) {
+                            args("--do-not-resolve-by-default")
+                            args("--warn-if-resolved=incubating")
                         }
                         args(jmodFile)
                     }

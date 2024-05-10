@@ -47,6 +47,12 @@ module javafx.base {
 
     exports com.sun.javafx to
         javafx.controls,
+
+        // TODO: incubator: Add entry for each incubator module here
+        // BEGIN: incubator placeholder
+        //jfx.incubator.mymod,
+        // END: incubator placeholder
+
         javafx.graphics,
         javafx.fxml,
         javafx.media,
