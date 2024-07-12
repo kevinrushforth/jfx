@@ -86,6 +86,8 @@
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
+    NSLog(@"KCR: windowDidResignKey");
+
     if (self->fullscreenWindow)
     {
         return;
@@ -93,8 +95,15 @@
 
     [self _ungrabFocus];
 
-    GET_MAIN_JENV;
-    (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocus, com_sun_glass_events_WindowEvent_FOCUS_LOST);
+    GET_MAIN_JENV_NOWARN;
+    if (env) {
+        (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocus, com_sun_glass_events_WindowEvent_FOCUS_LOST);
+    }
+
+    // KCR
+    if (!env) {
+        NSLog(@"KCR: Java has been detached");
+    }
 }
 
 - (void)windowWillClose:(NSNotification *)notification
