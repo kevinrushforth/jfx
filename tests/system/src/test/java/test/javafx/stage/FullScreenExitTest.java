@@ -23,7 +23,7 @@
  * questions.
  */
 
-package test.robot.javafx.stage;
+package test.javafx.stage;
 
 import java.util.concurrent.CountDownLatch;
 import javafx.application.Application;
