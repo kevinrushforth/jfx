@@ -25,7 +25,6 @@
 
 package com.sun.javafx.tk;
 
-import com.sun.glass.ui.Application;
 import javafx.application.ConditionalFeature;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Dimension2D;
@@ -67,6 +66,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import com.sun.glass.ui.Application;
 import com.sun.glass.ui.CommonDialogs.FileChooserResult;
 import com.sun.glass.ui.GlassRobot;
 import com.sun.glass.utils.NativeLibLoader;
@@ -291,8 +291,10 @@ public abstract class Toolkit {
     public void checkFxUserThread() {
         // Throw exception if not on FX user thread
         if (!isFxUserThread()) {
+            // FIXME: KCR -- DEBUG
             Application.consoleMessage("checkFxUserThread: fxUserThread = " + fxUserThread +
                     ", currentThread = " + Thread.currentThread());
+
             throw new IllegalStateException("Not on FX application thread; currentThread = "
                     + Thread.currentThread().getName());
         }
@@ -598,9 +600,10 @@ public abstract class Toolkit {
     public abstract void startup(Runnable runnable);
     public abstract void defer(Runnable runnable);
     public void exit() {
-        Application.consoleMessage(">>>Toolkit::exit: set fxUserThread to null!");
+        // FIXME: KCR -- DEBUG
+        Application.consoleMessage("Toolkit::exit: set fxUserThread to null!");
+
         fxUserThread = null;
-        Application.consoleMessage("<<<Toolkit::exit");
     }
 
     public abstract Map<Object, Object> getContextMap();

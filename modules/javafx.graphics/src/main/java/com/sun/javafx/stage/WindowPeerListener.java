@@ -105,6 +105,7 @@ public class WindowPeerListener implements TKStageListener {
 
     @Override
     public void closed() {
+        // FIXME: KCR -- DEBUG
         Application.consoleMessage("WindowPeerListener::closed : " +
                 "isEventThread = " + Application.isEventThread() +
                 ", thread = " + Thread.currentThread());

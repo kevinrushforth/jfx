@@ -1255,10 +1255,16 @@ public abstract class Window {
     // window event handlers
     // *****************************************************
     protected void handleWindowEvent(long time, int type) {
+        // KCR: This check is the fix for JDK-8299738
+        // Don't send any more events if the application has shutdown
         if (Application.GetApplication() == null) {
+
+            // FIXME: KCR -- DEBUG
             Application.consoleMessage("*** Application is null, ignoring event");
+
             return;
         }
+
         if (this.eventHandler != null) {
             this.eventHandler.handleWindowEvent(this, time, type);
         }

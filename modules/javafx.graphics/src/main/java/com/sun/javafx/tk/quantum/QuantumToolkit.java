@@ -832,20 +832,10 @@ public final class QuantumToolkit extends Toolkit {
         Application.invokeLater(runnable);
     }
 
-    @Override
-    public boolean isFxUserThread() {
-        if (super.isFxUserThread() != Application.isEventThread()) {
-            // We caught the bug!!!!!
-            Application.consoleMessage("***** Toolkit::isFxUserThread=" + super.isFxUserThread() +
-                    "  Application::isEventThread = " + Application.isEventThread());
-            Thread.dumpStack();
-        }
-//        return Application.isEventThread();
-        return super.isFxUserThread();
-    }
-
     @Override public void exit() {
+        // FIXME: KCR -- DEBUG
         Application.consoleMessage(">>>QuantumToolkit::exit");
+
         // This method must run on the FX application thread
         checkFxUserThread();
 
@@ -869,6 +859,8 @@ public final class QuantumToolkit extends Toolkit {
         dispose();
 
         super.exit();
+
+        // FIXME: KCR -- DEBUG
         Application.consoleMessage("<<<QuantumToolkit::exit");
     }
 

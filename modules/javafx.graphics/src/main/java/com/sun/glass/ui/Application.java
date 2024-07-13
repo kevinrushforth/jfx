@@ -164,7 +164,9 @@ public abstract class Application {
 
     // should return after loop termination completion
     protected void finishTerminating() {
+        // FIXME: KCR -- DEBUG
         consoleMessage("Application::finishTerminating : set application instance to null");
+
         // To make sure application object is not used outside of the run loop
         application = null;
         // The eventThread is null at this point, no need to check it
@@ -385,7 +387,9 @@ public abstract class Application {
     }
 
     public void terminate() {
+        // FIXME: KCR -- DEBUG
         consoleMessage("Application::terminate");
+
         checkEventThread();
         try {
                 final List<Window> windows = new LinkedList<>(Window.getWindows());
@@ -411,10 +415,13 @@ public abstract class Application {
 
     // May be called on any thread
     protected static void setEventThread(Thread thread) {
+        // FIXME: KCR -- DEBUG
         consoleMessage("Application::setEventThread : thread = " + thread);
+
         Application.eventThread = thread;
     }
 
+    // FIXME: KCR -- DEBUG
     private static native void _consoleMessage(String str);
     public static void consoleMessage(String str) {
         str = "KCR: " + str;

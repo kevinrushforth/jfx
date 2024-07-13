@@ -343,6 +343,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (void)applicationWillResignActive:(NSNotification *)aNotification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationWillResignActive");
 
     GET_MAIN_JENV;
@@ -356,6 +357,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (void)applicationDidResignActive:(NSNotification *)aNotification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationDidResignActive");
 
     GET_MAIN_JENV;
@@ -375,6 +377,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (void)applicationWillHide:(NSNotification *)aNotification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationWillHide");
 
     GET_MAIN_JENV;
@@ -388,6 +391,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (void)applicationDidHide:(NSNotification *)aNotification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationDidHide");
 
     GET_MAIN_JENV;
@@ -401,6 +405,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (void)applicationWillUnhide:(NSNotification *)aNotification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationWillUnhide");
 
     GET_MAIN_JENV;
@@ -414,6 +419,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (void)applicationDidUnhide:(NSNotification *)aNotification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationDidUnhide");
 
     GET_MAIN_JENV;
@@ -505,6 +511,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:applicationShouldTerminate");
 
     GET_MAIN_JENV;
@@ -733,7 +740,9 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
             GLASS_CHECK_EXCEPTION(jEnv);
 
+            // FIXME: KCR -- DEBUG
             NSLog(@"KCR: runLoop: calling MacApplication::notifyApplicationDidTerminate");
+
             (*jEnv)->CallVoidMethod(jEnv, self->jApplication, javaIDs.MacApplication.notifyApplicationDidTerminate);
             GLASS_CHECK_EXCEPTION(jEnv);
 
@@ -742,6 +751,8 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
             {
                 NSLog(@"Unable to detach from JVM. Error code: %d\n", (int)err);
             }
+
+            // FIXME: KCR -- DEBUG
             NSLog(@"#*#*#*#*# JVM detached!!!!!");
 
             jEnv = NULL;
@@ -769,6 +780,7 @@ jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 
     [pool1 drain];
 
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: GlassApplication:runLoop EXIT");
 }
 
@@ -989,6 +1001,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1runLoop
 (JNIEnv *env, jobject japplication, jobject classLoader,
  jobject jlaunchable, jboolean isTaskbarApplication)
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: Java_com_sun_glass_ui_mac_MacApplication__1runLoop");
 
     NSAutoreleasePool *glasspool = [[NSAutoreleasePool alloc] init];
@@ -1033,6 +1046,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1runLoop
 JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1finishTerminating
 (JNIEnv *env, jobject japplication)
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: Java_com_sun_glass_ui_mac_MacApplication__1finishTerminating");
 
     if (isEmbedded) {
@@ -1070,6 +1084,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1finishTerminat
 JNIEXPORT jobject JNICALL Java_com_sun_glass_ui_mac_MacApplication__1enterNestedEventLoopImpl
 (JNIEnv *env, jobject japplication)
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: Java_com_sun_glass_ui_mac_MacApplication__1enterNestedEventLoopImpl");
 
     jobject ret;
@@ -1092,6 +1107,7 @@ JNIEXPORT jobject JNICALL Java_com_sun_glass_ui_mac_MacApplication__1enterNested
 JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1leaveNestedEventLoopImpl
 (JNIEnv *env, jobject japplication, jobject retValue)
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: Java_com_sun_glass_ui_mac_MacApplication__1leaveNestedEventLoopImpl");
 
     NSAutoreleasePool *glasspool = [[NSAutoreleasePool alloc] init];
@@ -1102,6 +1118,7 @@ JNIEXPORT void JNICALL Java_com_sun_glass_ui_mac_MacApplication__1leaveNestedEve
     GLASS_CHECK_EXCEPTION(env);
 }
 
+// FIXME: KCR -- DEBUG
 /*
  * Class:     com_sun_glass_ui_Application
  * Method:    _consoleMessage

@@ -86,6 +86,7 @@
 
 - (void)windowDidResignKey:(NSNotification *)notification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: windowDidResignKey");
 
     if (self->fullscreenWindow)
@@ -95,19 +96,21 @@
 
     [self _ungrabFocus];
 
+    // KCR: This is the fix for JDK-8335630
     GET_MAIN_JENV_NOWARN;
     if (env) {
         (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyFocus, com_sun_glass_events_WindowEvent_FOCUS_LOST);
     }
 
-    // KCR
+    // FIXME: KCR -- DEBUG
     if (!env) {
-        NSLog(@"KCR: Java has been detached");
+        NSLog(@"KCR: *** Java has been detached -- we just saved a crash!!!");
     }
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: windowWillClose");
 
     // Unparent self. Otherwise the code hangs
@@ -128,6 +131,7 @@
     assert(pthread_main_np() == 1);
     JNIEnv *env = jEnv;
     if (env != NULL) {
+        // FIXME: KCR -- DEBUG
         NSLog(@"KCR: calling notifyDestroy");
         (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyDestroy);
     }
@@ -209,6 +213,7 @@
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: windowWillEnterFullScreen");
 
     NSUInteger mask = [self->nsWindow styleMask];
@@ -218,6 +223,7 @@
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: windowDidEnterFullScreen");
     [(GlassViewDelegate*)[self->view delegate] sendJavaFullScreenEvent:YES withNativeWidget:YES];
     [GlassApplication leaveFullScreenExitingLoopIfNeeded];
@@ -230,6 +236,7 @@
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: windowDidExitFullScreen");
 
     GlassViewDelegate* delegate = (GlassViewDelegate*)[self->view delegate];
@@ -241,7 +248,9 @@
 
 - (BOOL)windowShouldClose:(NSNotification *)notification
 {
+    // FIXME: KCR -- DEBUG
     NSLog(@"KCR: windowShouldClose");
+
     if (self->isEnabled)
     {
         GET_MAIN_JENV;
