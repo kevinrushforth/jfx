@@ -58,12 +58,10 @@ public class FullScreenExitTest {
 
             borderPane = new BorderPane();
 
-            scene = new Scene(borderPane, 200, 200);
+            scene = new Scene(borderPane, 400, 300);
             stage.setScene(scene);
-            stage.setOnShown(event -> {
-                Platform.runLater(startupLatch::countDown);
-            });
             stage.setFullScreen(true);
+            stage.setOnShown(e -> Platform.runLater(startupLatch::countDown));
             stage.show();
         }
 
