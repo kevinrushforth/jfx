@@ -108,6 +108,9 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
+    NSLog(@"KCR: windowWillClose");
+    GLASS_CALLSTACK("")
+
     // Unparent self. Otherwise the code hangs
     if ([self->nsWindow parentWindow])
     {
