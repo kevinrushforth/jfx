@@ -25,6 +25,7 @@
 
 package com.sun.javafx.tk;
 
+import com.sun.glass.ui.Application;
 import javafx.application.ConditionalFeature;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Dimension2D;
@@ -290,6 +291,8 @@ public abstract class Toolkit {
     public void checkFxUserThread() {
         // Throw exception if not on FX user thread
         if (!isFxUserThread()) {
+            Application.consoleMessage("checkFxUserThread: fxUserThread = " + fxUserThread +
+                    ", currentThread = " + Thread.currentThread());
             throw new IllegalStateException("Not on FX application thread; currentThread = "
                     + Thread.currentThread().getName());
         }
@@ -595,7 +598,9 @@ public abstract class Toolkit {
     public abstract void startup(Runnable runnable);
     public abstract void defer(Runnable runnable);
     public void exit() {
+        Application.consoleMessage(">>>Toolkit::exit: set fxUserThread to null!");
         fxUserThread = null;
+        Application.consoleMessage("<<<Toolkit::exit");
     }
 
     public abstract Map<Object, Object> getContextMap();

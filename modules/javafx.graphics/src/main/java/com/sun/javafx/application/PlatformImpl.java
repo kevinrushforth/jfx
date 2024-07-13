@@ -584,6 +584,8 @@ public class PlatformImpl {
         }
 
         if (doNotify) {
+            System.err.println("***** PlatformImpl::checkIdle : doNotify = true");
+            System.err.flush();
             notifyFinishListeners(false);
         }
     }

@@ -140,6 +140,8 @@ final class MacApplication extends Application implements InvokeLaterDispatcher.
     }
 
     private void notifyApplicationDidTerminate() {
+        System.err.println("*** MacApplication::notifyApplicationDidTerminate -- setting event thread to null!!!!!");
+        System.err.flush();
         setEventThread(null);
     }
 

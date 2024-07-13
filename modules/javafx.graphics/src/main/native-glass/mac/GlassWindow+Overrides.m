@@ -109,7 +109,6 @@
 - (void)windowWillClose:(NSNotification *)notification
 {
     NSLog(@"KCR: windowWillClose");
-    GLASS_CALLSTACK("")
 
     // Unparent self. Otherwise the code hangs
     if ([self->nsWindow parentWindow])
@@ -129,6 +128,7 @@
     assert(pthread_main_np() == 1);
     JNIEnv *env = jEnv;
     if (env != NULL) {
+        NSLog(@"KCR: calling notifyDestroy");
         (*env)->CallVoidMethod(env, self->jWindow, jWindowNotifyDestroy);
     }
 }
@@ -209,7 +209,7 @@
 
 - (void)windowWillEnterFullScreen:(NSNotification *)notification
 {
-    //NSLog(@"windowWillEnterFullScreen");
+    NSLog(@"KCR: windowWillEnterFullScreen");
 
     NSUInteger mask = [self->nsWindow styleMask];
     self->isWindowResizable = ((mask & NSWindowStyleMaskResizable) != 0);
@@ -218,7 +218,7 @@
 
 - (void)windowDidEnterFullScreen:(NSNotification *)notification
 {
-    //NSLog(@"windowDidEnterFullScreen");
+    NSLog(@"KCR: windowDidEnterFullScreen");
     [(GlassViewDelegate*)[self->view delegate] sendJavaFullScreenEvent:YES withNativeWidget:YES];
     [GlassApplication leaveFullScreenExitingLoopIfNeeded];
 }
@@ -230,7 +230,7 @@
 
 - (void)windowDidExitFullScreen:(NSNotification *)notification
 {
-    //NSLog(@"windowDidExitFullScreen");
+    NSLog(@"KCR: windowDidExitFullScreen");
 
     GlassViewDelegate* delegate = (GlassViewDelegate*)[self->view delegate];
     [delegate setResizableForFullscreen:self->isWindowResizable];
@@ -241,6 +241,7 @@
 
 - (BOOL)windowShouldClose:(NSNotification *)notification
 {
+    NSLog(@"KCR: windowShouldClose");
     if (self->isEnabled)
     {
         GET_MAIN_JENV;

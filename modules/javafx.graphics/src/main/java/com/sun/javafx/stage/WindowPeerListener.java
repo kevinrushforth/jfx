@@ -25,6 +25,7 @@
 
 package com.sun.javafx.stage;
 
+import com.sun.glass.ui.Application;
 import javafx.event.Event;
 import javafx.stage.Window;
 
@@ -104,6 +105,10 @@ public class WindowPeerListener implements TKStageListener {
 
     @Override
     public void closed() {
+        Application.consoleMessage("WindowPeerListener::closed : " +
+                "isEventThread = " + Application.isEventThread() +
+                ", thread = " + Thread.currentThread());
+
         if (window.isShowing()) {
             // This is a notification to an owned window, which is being
             // closed as a result of closing its owner. The owned window

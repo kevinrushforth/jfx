@@ -27,6 +27,7 @@ package com.sun.glass.ui;
 import com.sun.glass.events.KeyEvent;
 import com.sun.glass.ui.CommonDialogs.ExtensionFilter;
 import com.sun.glass.ui.CommonDialogs.FileChooserResult;
+import com.sun.javafx.PlatformUtil;
 
 import java.io.File;
 import java.nio.ByteBuffer;
@@ -383,6 +384,7 @@ public abstract class Application {
     }
 
     public void terminate() {
+        consoleMessage("Application::terminate");
         checkEventThread();
         try {
                 final List<Window> windows = new LinkedList<>(Window.getWindows());
@@ -408,7 +410,19 @@ public abstract class Application {
 
     // May be called on any thread
     protected static void setEventThread(Thread thread) {
+        consoleMessage("Application::setEventThread : thread = " + thread);
         Application.eventThread = thread;
+    }
+
+    private static native void _consoleMessage(String str);
+    public static void consoleMessage(String str) {
+        str = "KCR: " + str;
+        if (PlatformUtil.isMac()) {
+            _consoleMessage(str);
+        } else {
+            System.err.println(str);
+            System.err.flush();
+        }
     }
 
     // May be called on any thread

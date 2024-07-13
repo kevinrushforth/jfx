@@ -1255,6 +1255,10 @@ public abstract class Window {
     // window event handlers
     // *****************************************************
     protected void handleWindowEvent(long time, int type) {
+        if (Application.GetApplication() == null) {
+            Application.consoleMessage("*** Application is null, ignoring event");
+            return;
+        }
         if (this.eventHandler != null) {
             this.eventHandler.handleWindowEvent(this, time, type);
         }
