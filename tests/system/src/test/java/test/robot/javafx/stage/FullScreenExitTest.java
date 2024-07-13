@@ -26,24 +26,24 @@
 package test.robot.javafx.stage;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import test.util.Util;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import test.util.Util;
-
+/*
+ * Test that we can shutdown the JavaFX runtime via Platform::exit
+ * while in full screen mode.
+ *
+ * @bug 8335630
+ */
 public class FullScreenExitTest {
-    private static Robot robot;
     private static Stage stage;
     private static Scene scene;
     private static BorderPane borderPane;
@@ -54,7 +54,6 @@ public class FullScreenExitTest {
     public static class TestApp extends Application {
         @Override
         public void start(Stage primaryStage) {
-            robot = new Robot();
             stage = primaryStage;
 
             borderPane = new BorderPane();
@@ -93,8 +92,6 @@ public class FullScreenExitTest {
         // Wait until the application has been stopped and then sleep for
         // one second to see whether it will crash
         assertTrue(Util.await(stopLatch), "Timeout waiting for Application::stop");
-
-        // Sleep for one second to see whether it will crash
         Util.sleep(1000);
     }
 
