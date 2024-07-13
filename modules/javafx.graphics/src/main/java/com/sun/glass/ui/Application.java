@@ -164,6 +164,7 @@ public abstract class Application {
 
     // should return after loop termination completion
     protected void finishTerminating() {
+        consoleMessage("Application::finishTerminating : set application instance to null");
         // To make sure application object is not used outside of the run loop
         application = null;
         // The eventThread is null at this point, no need to check it
