@@ -395,7 +395,7 @@ public abstract class Window {
         final Screen old = this.screen;
         this.screen = screen;
 
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             if ((old == null && this.screen != null) ||
                 (old != null && !old.equals(this.screen))) {
                 this.eventHandler.handleScreenChangedEvent(this, System.nanoTime(), old, this.screen);
@@ -1251,21 +1251,25 @@ public abstract class Window {
         this.delegatePtr = ptr;
     }
 
-    // *****************************************************
-    // window event handlers
-    // *****************************************************
-    protected void handleWindowEvent(long time, int type) {
+    private boolean shouldHandleEvent() {
         // KCR: This check is the fix for JDK-8299738
         // Don't send any more events if the application has shutdown
         if (Application.GetApplication() == null) {
 
             // FIXME: KCR -- DEBUG
-            Application.consoleMessage("*** Application is null, ignoring event");
+            Application.consoleMessage("*** Window::shouldHandleEvent: Application is null, ignoring event");
 
-            return;
+            return false;
         }
 
-        if (this.eventHandler != null) {
+        return this.eventHandler != null;
+    }
+
+    // *****************************************************
+    // window event handlers
+    // *****************************************************
+    protected void handleWindowEvent(long time, int type) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleWindowEvent(this, time, type);
         }
     }
@@ -1396,7 +1400,7 @@ public abstract class Window {
 
     protected void notifyLevelChanged(int level) {
         this.level = level;
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleLevelEvent(level);
         }
     }

@@ -528,17 +528,31 @@ public abstract class View {
         this.eventHandler = eventHandler;
     }
 
+    private boolean shouldHandleEvent() {
+        // KCR: This check is the fix for JDK-8299738
+        // Don't send any more events if the application has shutdown
+        if (Application.GetApplication() == null) {
+
+            // FIXME: KCR -- DEBUG
+            Application.consoleMessage("*** View::shouldHandleEvent: Application is null, ignoring event");
+
+            return false;
+        }
+
+        return this.eventHandler != null;
+    }
+
     //-------- EVENTS --------//
 
     private void handleViewEvent(long time, int type) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleViewEvent(this, time, type);
         }
     }
 
     private void handleKeyEvent(long time, int action,
             int keyCode, char[] keyChars, int modifiers) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleKeyEvent(this, time, action, keyCode, keyChars, modifiers);
         }
     }
@@ -547,7 +561,7 @@ public abstract class View {
                                   int xAbs, int yAbs,
                                   int modifiers, boolean isPopupTrigger,
                                   boolean isSynthesized) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleMouseEvent(this, time, type, button, x, y, xAbs,
                                           yAbs, modifiers,
                                           isPopupTrigger, isSynthesized);
@@ -555,14 +569,14 @@ public abstract class View {
     }
 
     private void handleMenuEvent(int x, int y, int xAbs, int yAbs, boolean isKeyboardTrigger) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleMenuEvent(this, x, y, xAbs, yAbs, isKeyboardTrigger);
         }
     }
 
     public void handleBeginTouchEvent(View view, long time, int modifiers,
                                       boolean isDirect, int touchEventCount) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleBeginTouchEvent(view, time, modifiers, isDirect,
                     touchEventCount);
         }
@@ -571,13 +585,13 @@ public abstract class View {
     public void handleNextTouchEvent(View view, long time, int type,
                                      long touchId, int x, int y, int xAbs,
                                      int yAbs) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleNextTouchEvent(view, time, type, touchId, x, y, xAbs, yAbs);
         }
     }
 
     public void handleEndTouchEvent(View view, long time) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleEndTouchEvent(view, time);
         }
     }
@@ -589,7 +603,7 @@ public abstract class View {
                                          double dx, double dy, double totaldx,
                                          double totaldy, double multiplierX,
                                          double multiplierY) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleScrollGestureEvent(view, time, type, modifiers, isDirect,
                     isInertia, touchCount, x, y, xAbs, yAbs,
                     dx, dy, totaldx, totaldy, multiplierX, multiplierY);
@@ -603,7 +617,7 @@ public abstract class View {
                                        int originyAbs, double scale,
                                        double expansion, double totalscale,
                                        double totalexpansion) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleZoomGestureEvent(view, time, type, modifiers, isDirect,
                                      isInertia, originx, originy, originxAbs,
                                      originyAbs, scale, expansion, totalscale,
@@ -617,7 +631,7 @@ public abstract class View {
                                          int originy, int originxAbs,
                                          int originyAbs, double dangle,
                                          double totalangle) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleRotateGestureEvent(view, time, type, modifiers, isDirect,
                     isInertia, originx, originy, originxAbs,
                     originyAbs, dangle, totalangle);
@@ -629,7 +643,7 @@ public abstract class View {
                                         boolean isInertia, int touchCount,
                                         int dir, int originx, int originy,
                                         int originxAbs, int originyAbs) {
-        if (eventHandler != null) {
+        if (shouldHandleEvent()) {
             eventHandler.handleSwipeGestureEvent(view, time, type, modifiers, isDirect,
                     isInertia, touchCount, dir, originx,
                     originy, originxAbs, originyAbs);
@@ -639,7 +653,7 @@ public abstract class View {
     private void handleInputMethodEvent(long time, String text, int[] clauseBoundary,
                 int[] attrBoundary, byte[] attrValue,
                 int commitCount, int cursorPos) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleInputMethodEvent(time, text, clauseBoundary,
                 attrBoundary, attrValue,
                 commitCount, cursorPos);
@@ -659,7 +673,7 @@ public abstract class View {
     }
 
     private double[] getInputMethodCandidatePos(int offset) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             return this.eventHandler.getInputMethodCandidatePos(offset);
         }
         return null;
@@ -667,20 +681,20 @@ public abstract class View {
 
     private void handleDragStart(int button, int x, int y, int xAbs, int yAbs,
             ClipboardAssistance dropSourceAssistant) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleDragStart(this, button, x, y, xAbs, yAbs, dropSourceAssistant);
         }
     }
 
     private void handleDragEnd(int performedAction) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleDragEnd(this, performedAction);
         }
     }
 
     private int handleDragEnter(int x, int y, int xAbs, int yAbs,
             int recommendedDropAction, ClipboardAssistance dropTargetAssistant) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             return this.eventHandler.handleDragEnter(this, x, y, xAbs, yAbs, recommendedDropAction, dropTargetAssistant);
         } else {
             return recommendedDropAction;
@@ -689,7 +703,7 @@ public abstract class View {
 
     private int handleDragOver(int x, int y, int xAbs, int yAbs,
             int recommendedDropAction, ClipboardAssistance dropTargetAssistant) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             return this.eventHandler.handleDragOver(this, x, y, xAbs, yAbs, recommendedDropAction, dropTargetAssistant);
         } else {
             return recommendedDropAction;
@@ -697,14 +711,14 @@ public abstract class View {
     }
 
     private void handleDragLeave(ClipboardAssistance dropTargetAssistant) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleDragLeave(this, dropTargetAssistant);
         }
     }
 
     private int handleDragDrop(int x, int y, int xAbs, int yAbs,
             int recommendedDropAction, ClipboardAssistance dropTargetAssistant) {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             return this.eventHandler.handleDragDrop(this, x, y, xAbs, yAbs, recommendedDropAction, dropTargetAssistant);
         } else {
             return Clipboard.ACTION_NONE;
@@ -955,7 +969,7 @@ public abstract class View {
             int defaultLines, int defaultChars,
             double xMultiplier, double yMultiplier)
     {
-        if (this.eventHandler != null) {
+        if (shouldHandleEvent()) {
             this.eventHandler.handleScrollEvent(this, System.nanoTime(),
                     x, y, xAbs, yAbs, deltaX, deltaY, modifiers, lines, chars,
                     defaultLines, defaultChars, xMultiplier, yMultiplier);
