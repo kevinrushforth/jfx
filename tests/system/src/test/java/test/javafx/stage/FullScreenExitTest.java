@@ -35,10 +35,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import test.util.Util;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /*
- * Test that we can shutdown the JavaFX runtime via Platform::exit
+ * Test that we can shutdown the JavaFX runtime cleanly via Platform::exit
  * while in full screen mode.
  *
  * @bug 8335630
@@ -48,12 +49,20 @@ public class FullScreenExitTest {
     private static Scene scene;
     private static BorderPane borderPane;
 
+    private static volatile Throwable exception;
+
     private static CountDownLatch startupLatch = new CountDownLatch(1);
     private static CountDownLatch stopLatch = new CountDownLatch(1);
 
     public static class TestApp extends Application {
         @Override
         public void start(Stage primaryStage) {
+            Thread.currentThread().setUncaughtExceptionHandler((thr, ex) -> {
+                System.err.println("Exception caught in thread: " + thr);
+                ex.printStackTrace();
+                exception = ex;
+            });
+
             stage = primaryStage;
 
             borderPane = new BorderPane();
@@ -91,6 +100,8 @@ public class FullScreenExitTest {
         // one second to see whether it will crash
         assertTrue(Util.await(stopLatch), "Timeout waiting for Application::stop");
         Util.sleep(1000);
+
+        assertSame(null, exception, "Unexpected exception");
     }
 
 }
