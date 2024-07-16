@@ -529,8 +529,12 @@ public abstract class View {
     }
 
     private boolean shouldHandleEvent() {
+        System.err.println("View::shouldHandleEvent: thread=" + Thread.currentThread());
         // Don't send any more events if the application has shutdown
         if (Application.GetApplication() == null) {
+            // FIXME: KCR -- DEBUG
+            System.err.println("KCR: *** View::shouldHandleEvent: Application is null, ignoring event");
+
             return false;
         }
 
