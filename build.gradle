@@ -3952,7 +3952,7 @@ project(":systemTests") {
         testImplementation project(":swing").sourceSets.test.output
     }
 
-    def dependentProjects = [ 'base', 'graphics', 'controls', 'media', 'web', 'swing', 'fxml' ]
+    def dependentProjects = [ 'base', 'graphics', 'controls', 'media', 'jsobject', 'web', 'swing', 'fxml' ]
     commonModuleSetup(project, dependentProjects)
 
     File testJavaPolicyFile = new File(rootProject.buildDir, TESTJAVAPOLICYFILE);
@@ -4393,7 +4393,7 @@ task javadoc(type: Javadoc, dependsOn: createMSPfile) {
     executable = JAVADOC
     def projectsToDocument = [
             project(":base"), project(":graphics"), project(":controls"), project(":media"),
-            project(":swing"), /*project(":swt"),*/ project(":fxml"), project(":web")]
+            project(":swing"), /*project(":swt"),*/ project(":fxml"), project(":jsobject"), project(":web")]
     source(projectsToDocument.collect({
         [it.sourceSets.main.java]
     }));
