@@ -3638,7 +3638,7 @@ project(":web") {
     project.ext.moduleSourcePath = defaultModuleSourcePath
     project.ext.moduleSourcePathShim = defaultModuleSourcePathShim
 
-    commonModuleSetup(project, [ 'base', 'graphics', 'controls', 'media', 'web' ])
+    commonModuleSetup(project, [ 'base', 'graphics', 'controls', 'media', 'jsobject', 'web' ])
 
     dependencies {
         if (IS_COMPILE_WEBKIT) {
@@ -3886,7 +3886,7 @@ project(":web") {
         assemble.dependsOn compileJavaDOMBinding, drtJar
     }
 
-    addMavenPublication(project, [ 'controls', 'media' ])
+    addMavenPublication(project, [ 'controls', 'media', 'jsobject' ])
 
     addValidateSourceSets(project, sourceSets)
 }
