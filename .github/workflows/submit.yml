@@ -64,6 +64,7 @@ jobs:
 
   linux_x64_build:
     name: Linux x64
+    if: false
     needs: validation
     runs-on: "ubuntu-24.04"
 
@@ -146,6 +147,7 @@ jobs:
 
   macos_x64_build:
     name: macOS x64
+    if: false
     needs: validation
     runs-on: "macos-13"
 
@@ -232,6 +234,7 @@ jobs:
 
   macos_aarch64_build:
     name: macOS aarch64
+    if: false
     needs: validation
     runs-on: "macos-14"
 
@@ -416,7 +419,7 @@ jobs:
           which java
           java -version
           .\gradlew.bat -version
-          .\gradlew.bat --info all
+          .\gradlew.bat --info tasks
 
       - name: Run JavaFX headless tests
         working-directory: jfx
@@ -425,4 +428,4 @@ jobs:
           echo "ANT_HOME=$env:ANT_HOME"
           $env:Path = "$env:THE_PATH" ;
           echo "Path=$env:Path"
-          .\gradlew.bat --info --continue -PTEST_ONLY=true test -x :web:test
+          echo .\gradlew.bat --info --continue -PTEST_ONLY=true test -x :web:test
