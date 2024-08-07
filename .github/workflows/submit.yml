@@ -420,6 +420,7 @@ jobs:
           java -version
           .\gradlew.bat -version
           .\gradlew.bat --info tasks
+          cat build\windows_tools.properties
 
       - name: Run JavaFX headless tests
         working-directory: jfx
