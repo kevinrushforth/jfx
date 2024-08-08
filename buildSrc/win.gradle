@@ -110,7 +110,7 @@ println "KCR: END"
 
 
 if (WINDOWS_SDK_DIR == null || WINDOWS_SDK_DIR == "") {
-    throw new GradleException("FAIL: WINSDK_DIR not defined");
+    throw new GradleException("Cannot locate Visual Studio compilers; set the 'VSCOMNTOOLS' env var\nto the 'VC/Auxiliary/Build' dir in your Visual Studio installation");
 }
 
 // Define set of flags shared for all targets that support debug compilation

@@ -37,62 +37,33 @@ REM The current officially supported Visual Studio version is VS 2022
 REM Try the following in order of priority:
 REM 1. VSCOMNTOOLS property
 REM 2. VS150COMNTOOLS property
+REM 3. Look in standard locations for Visual Studio (2022|2019|2017)
 
-set VS2022ROOT=C:\Program Files\Microsoft Visual Studio\2022
-set VS2019ROOT=C:\Program Files\Microsoft Visual Studio\2019
-set VS2017ROOT=C:\Program Files (x86)\Microsoft Visual Studio\2017
+
 set AUXBUILD=VC\Auxiliary\Build
 
 if not "%VSCOMNTOOLS%"=="" (
     set "VSTOOLSDIR=%VSCOMNTOOLS%"
 ) else if not "%VS150COMNTOOLS%"=="" (
     set "VSTOOLSDIR=%VS150COMNTOOLS%"
+) else (
+    for %%a in (2022, 2019, 2017) do (
+        set year=%%a
+        for %%b in (Enterprise, Professional, Community) do (
+            set edition=%%b
+            for %%c in ("Program Files", "Program Files (x86)") do (
+                set ProgramFiles=%%~c
+                set "TMPDIR=C:\!ProgramFiles!\Microsoft Visual Studio\!year!\!edition!\%AUXBUILD%"
+                if exist "!TMPDIR!" (
+                    set "VSTOOLSDIR=!TMPDIR!"
+                    goto FOUNDVS
+                )
+            )
+        )
+    )
 )
 
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2022ROOT%\Enterprise\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2022ROOT%\Professional\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2022ROOT%\Community\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2022ROOT%\Enterprise\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2019ROOT%\Professional\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2019ROOT%\Community\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2017ROOT%\Enterprise\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2017ROOT%\Professional\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
-
-if "%VSTOOLSDIR%"=="" (
-    set "TMPDIR=%VS2017ROOT%\Community\%AUXBUILD%"
-    if exist "!TMPDIR!" set "VSTOOLSDIR=!TMPDIR!"
-)
+:FOUNDVS
 
 if "%VSTOOLSDIR%"=="" exit
 if not exist "%VSTOOLSDIR%" exit
