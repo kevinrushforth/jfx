@@ -212,29 +212,30 @@ println "KCR: winSdkDllDir = $winSdkDllDir"
 
 def windowsCRTVer = System.getenv("WINDOWS_CRT_VER") ?: WINDOWS_CRT_VER
 
-def vs2017DllPath = cygpath("${msvcRedstDir}/Microsoft.VC${windowsCRTVer}.CRT")
-if (file(vs2017DllPath).exists()) {
-    ext.WIN.VS2017DLLNames = [
+def vsDllPath = cygpath("${msvcRedstDir}/Microsoft.VC${windowsCRTVer}.CRT")
+if (file(vsDllPath).exists()) {
+    ext.WIN.VSDLLNames = [
         "msvcp140.dll",
         "msvcp140_1.dll",
         "msvcp140_2.dll",
         "vcruntime140.dll",
         "vcruntime140_1.dll"
     ];
-    ext.WIN.VS2017DLLs = []
-    ext.WIN.VS2017DLLNames.each { vsdll->
-        ext.WIN.VS2017DLLs += "$vs2017DllPath/$vsdll"
+    ext.WIN.VSDLLs = []
+    ext.WIN.VSDLLNames.each { vsdll->
+        ext.WIN.VSDLLs += "$vsDllPath/$vsdll"
     }
 }
 else {
-    ext.WIN.VS2017DLLNames = [
+    ext.WIN.VSDLLNames = [
     ];
-    ext.WIN.VS2017DLLs = [
+    ext.WIN.VSDLLs = [
     ];
 }
 
 def WinSDKDLLsPath = cygpath("${winSdkDllDir}")
 if (file(WinSDKDLLsPath).exists()) {
+    println "KCR: WinSDKDLLsPath exists"
     ext.WIN.WinSDKDLLNames = [
         "api-ms-win-core-console-l1-1-0.dll",
         "api-ms-win-core-console-l1-2-0.dll",

@@ -415,6 +415,7 @@ jobs:
           echo SKIPPING .\gradlew.bat --info all
           .\gradlew.bat --info sdk
           cat build\windows_tools.properties
+          ls build/sdk/bin
 
       - name: Run JavaFX headless tests
         working-directory: jfx

@@ -5388,7 +5388,7 @@ compileTargets { t ->
             }
             if (IS_WINDOWS) {
                 from ("${graphicsProject.buildDir}/libs/prismD3D/${t.name}/${library(targetProperties.prismD3D.lib)}");
-                targetProperties.VS2017DLLs.each { vslib ->
+                targetProperties.VSDLLs.each { vslib ->
                     from ("$vslib");
                 }
                 targetProperties.WinSDKDLLs.each { winsdklib ->
@@ -5403,7 +5403,7 @@ compileTargets { t ->
                     inputFiles.include("*.dylib")
                     inputFiles.include("*.so")
                     // FIXME: if we ever need to strip on Windows platforms, we must
-                    // exclude the Microsoft DLLs (VS2017DLLNames and WinSDKDLLNames)
+                    // exclude the Microsoft DLLs (VSDLLNames and WinSDKDLLNames)
 
                     inputFiles.each { file ->
                         exec {
@@ -5420,7 +5420,7 @@ compileTargets { t ->
                     inputFiles.include("*.dylib")
                     inputFiles.include("*.so")
                     // FIXME: if we ever need to sign on Windows platforms, we must
-                    // exclude the Microsoft DLLs (VS2017DLLNames and WinSDKDLLNames)
+                    // exclude the Microsoft DLLs (VSDLLNames and WinSDKDLLNames)
 
                     inputFiles.each { file ->
                         exec {
@@ -5495,7 +5495,7 @@ compileTargets { t ->
                     inputFiles.include("*.dylib")
                     inputFiles.include("*.so")
                     // FIXME: if we ever need to sign on Windows platforms, we must
-                    // exclude the Microsoft DLLs (VS2017DLLNames and WinSDKDLLNames)
+                    // exclude the Microsoft DLLs (VSDLLNames and WinSDKDLLNames)
 
                     inputFiles.each { file ->
                         exec {
@@ -5548,7 +5548,7 @@ compileTargets { t ->
                     inputFiles.include("*.dylib")
                     inputFiles.include("*.so")
                     // FIXME: if we ever need to sign on Windows platforms, we must
-                    // exclude the Microsoft DLLs (VS2017DLLNames and WinSDKDLLNames)
+                    // exclude the Microsoft DLLs (VSDLLNames and WinSDKDLLNames)
 
                     inputFiles.each { file ->
                         exec {
