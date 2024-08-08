@@ -952,7 +952,6 @@ void ant(String conf,   // platform configuration
                     "INCLUDE"              : WINDOWS_VS_INCLUDE,
                     "LIB"                  : WINDOWS_VS_LIB,
                     "LIBPATH"              : WINDOWS_VS_LIBPATH,
-                    "DXSDK_DIR"            : WINDOWS_DXSDK_DIR,
                     "PATH"                 : WINDOWS_VS_PATH
             ]);
             commandLine "cmd", "/s", "/c", '"' + String.join(" ", cmdArgs) + '"'
