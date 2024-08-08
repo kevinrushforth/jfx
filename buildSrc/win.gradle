@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, 2023, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, 2024, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -91,6 +91,7 @@ setupTools("windows_tools",
     }
 )
 
+// FIXME KCR: BEGIN VERBOSE
 println "KCR: BEGIN"
 println "WINDOWS_VS_VSINSTALLDIR=$WINDOWS_VS_VSINSTALLDIR"
 println "WINDOWS_VS_WINSDKDLLINSTALLDIR=$WINDOWS_VS_WINSDKDLLINSTALLDIR"
@@ -107,7 +108,7 @@ println "WINDOWS_VS_LIB=$WINDOWS_VS_LIB"
 println "WINDOWS_VS_LIBPATH=$WINDOWS_VS_LIBPATH"
 println "WINDOWS_VS_PATH=$WINDOWS_VS_PATH"
 println "KCR: END"
-
+// FIXME KCR: END VERBOSE
 
 if (WINDOWS_SDK_DIR == null || WINDOWS_SDK_DIR == "") {
     throw new GradleException("Cannot locate Visual Studio compilers; set the 'VSCOMNTOOLS' env var\nto the 'VC/Auxiliary/Build' dir in your Visual Studio installation");
@@ -208,6 +209,8 @@ if (hasProperty('toolchainDir')) {
 def winSdkDllDir = WINDOWS_VS_WINSDKDLLINSTALLDIR != "" ?
     "$WINDOWS_VS_WINSDKDLLINSTALLDIR/$TARGET_ARCH" :
     "${WINDOWS_SDK_DIR}/Redist/${WINDOWS_SDK_VERSION}/ucrt/DLLs/$TARGET_ARCH"
+
+// FIXME KCR: VERBOSE
 println "KCR: winSdkDllDir = $winSdkDllDir"
 
 def windowsCRTVer = System.getenv("WINDOWS_CRT_VER") ?: WINDOWS_CRT_VER
@@ -235,6 +238,7 @@ else {
 
 def WinSDKDLLsPath = cygpath("${winSdkDllDir}")
 if (file(WinSDKDLLsPath).exists()) {
+    // FIXME KCR: VERBOSE
     println "KCR: WinSDKDLLsPath exists"
     ext.WIN.WinSDKDLLNames = [
         "api-ms-win-core-console-l1-1-0.dll",

@@ -64,7 +64,6 @@ jobs:
 
   linux_x64_build:
     name: Linux x64
-    if: false
     needs: validation
     runs-on: "ubuntu-24.04"
 
@@ -147,7 +146,6 @@ jobs:
 
   macos_x64_build:
     name: macOS x64
-    if: false
     needs: validation
     runs-on: "macos-13"
 
@@ -234,7 +232,6 @@ jobs:
 
   macos_aarch64_build:
     name: macOS aarch64
-    if: false
     needs: validation
     runs-on: "macos-14"
 
@@ -412,10 +409,11 @@ jobs:
           which java
           java -version
           .\gradlew.bat -version
-          echo SKIPPING .\gradlew.bat --info all
-          .\gradlew.bat --info sdk
+          .\gradlew.bat --info all
+          # FIXME KCR: BEGIN VERBOSE
           cat build\windows_tools.properties
           ls build/sdk/bin
+          # FIXME KCR: END VERBOSE
 
       - name: Run JavaFX headless tests
         working-directory: jfx
@@ -424,4 +422,4 @@ jobs:
           echo "ANT_HOME=$env:ANT_HOME"
           $env:Path = "$env:THE_PATH" ;
           echo "Path=$env:Path"
-          echo SKIPPING .\gradlew.bat --info --continue -PTEST_ONLY=true test -x :web:test
+          .\gradlew.bat --info --continue -PTEST_ONLY=true test -x :web:test
