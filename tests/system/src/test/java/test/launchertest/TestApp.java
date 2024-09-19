@@ -28,6 +28,8 @@ package test.launchertest;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 
 import static test.launchertest.Constants.*;
 
@@ -58,7 +60,15 @@ public class TestApp extends Application {
             System.exit(ERROR_START_BEFORE_INIT);
         }
         startCalled = true;
-        Platform.runLater(Platform::exit);
+        var root = new Pane();
+        var scene = new Scene(root, 300, 200);
+        stage.setScene(scene);
+        stage.show();
+        new Thread(() -> {
+            try { Thread.sleep(1000); } catch (InterruptedException ex) {}
+            System.exit(0);
+        }).start();
+        //Platform.runLater(Platform::exit);
     }
 
     @Override public void stop() {
@@ -82,6 +92,7 @@ public class TestApp extends Application {
     }
 
     static {
+        System.setProperty("quantum.dispose.hang", "true");
         try {
             Platform.runLater(() -> {
                 // do nothing

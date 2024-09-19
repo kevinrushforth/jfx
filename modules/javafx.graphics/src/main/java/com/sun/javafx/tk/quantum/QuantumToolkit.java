@@ -259,6 +259,15 @@ public final class QuantumToolkit extends Toolkit {
          */
         shutdownHook = new Thread("Glass/Prism Shutdown Hook") {
             @Override public void run() {
+                AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+                    if (System.getProperty("quantum.dispose.hang") != null) {
+                        // Simulate a deadlock or hang
+                        System.err.println("KCR: Simulate hang in QuantumToolkit.dispose");
+                        disposeHang = true;
+                    }
+                    return null;
+                });
+
                 // Run dispose in a background thread and wait for up to
                 // 5 seconds for it to finish. If it doesn't, then throw an
                 // error, so that if dispose hangs or deadlocks, it won't
@@ -876,9 +885,17 @@ public final class QuantumToolkit extends Toolkit {
         super.exit();
     }
 
+    private static volatile boolean disposeHang = false;
+
     @SuppressWarnings("removal")
     public void dispose() {
         if (toolkitRunning.compareAndSet(true, false)) {
+            if (disposeHang) {
+                System.err.println("KCR: QuantumToolkit.dispose: hang indefinitely");
+                var latch = new CountDownLatch(1);
+                try { latch.await(); } catch (InterruptedException ex) {}
+            }
+
             pulseTimer.stop();
             renderer.stopRenderer();
 
