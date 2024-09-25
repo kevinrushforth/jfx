@@ -49,9 +49,11 @@ package javafx.animation;
  *                 {@code t >= 0.5}.</td>
  *         </tr>
  *         <tr><td style="vertical-align: top"><a id="pairwise" style="white-space: nowrap">pairwise</a></td>
- *             <td>Two lists are combined by pairwise interpolation. If the start list has fewer elements than
- *                 the target list, the missing elements are copied from the target list. If the start list has
- *                 more elements than the target list, the excess elements are discarded.
+ *             <td>Two lists are combined by pairwise interpolation. Paired list elements are interpolated
+ *                 with rules as described in this table (substituting "component" for "element").
+ *                 If the start list has fewer elements than the target list, the missing elements are copied
+ *                 from the target list. If the start list has more elements than the target list, the excess
+ *                 elements are discarded.
  *             </td>
  *         </tr>
  *     </tbody>
@@ -70,7 +72,7 @@ public interface Interpolatable<T> {
      * {@code endValue} using the linear interpolation factor {@code t}, ranging from 0 (inclusive)
      * to 1 (inclusive).
      * <p>
-     * The returned value may not be a new instance; the implementation might also return one of the
+     * The returned value might not be a new instance; the implementation might also return one of the
      * two existing instances if the intermediate value would be equal to one of the existing values.
      * However, this is an optimization and applications should not assume any particular identity
      * of the returned value.
