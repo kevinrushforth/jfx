@@ -124,6 +124,7 @@ class GlassViewEventHandler extends View.EventHandler {
         return false;
     }
 
+    // FIXME: Consider removing this in a follow-on
     private boolean checkFullScreenKeyEvent(int type, int key, char chars[], int modifiers) {
         return scene.getWindowStage().isTrustedFullScreen() || allowableFullScreenKeys(key);
     }

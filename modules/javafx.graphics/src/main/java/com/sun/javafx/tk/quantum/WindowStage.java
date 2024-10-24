@@ -27,7 +27,6 @@ package com.sun.javafx.tk.quantum;
 
 import java.nio.ByteBuffer;
 import java.security.AccessController;
-import java.security.Permission;
 import java.security.PrivilegedAction;
 import java.security.AccessControlContext;
 import java.util.HashMap;
@@ -585,9 +584,8 @@ public class WindowStage extends GlassStage {
         // note: for child windows this is ignored and we fail silently
     }
 
-    // Return true if this stage is trusted for full screen - doesn't have a
-    // security manager, or a permission check doesn't result in a security
-    // exeception.
+    // Return true if this stage is trusted for full screen (it always is)
+    // FIXME: Consider removing in a follow-on issue
     boolean isTrustedFullScreen() {
         return true;
     }
