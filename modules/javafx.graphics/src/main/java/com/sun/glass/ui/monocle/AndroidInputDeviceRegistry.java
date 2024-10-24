@@ -132,11 +132,6 @@ public class AndroidInputDeviceRegistry extends InputDeviceRegistry {
     }
 
     void removeDevice(AndroidInputDevice device) {
-        @SuppressWarnings("removal")
-        SecurityManager security = System.getSecurityManager();
-        if (security != null) {
-            security.checkPermission(new AllPermission());
-        }
         devices.remove(device);
     }
 

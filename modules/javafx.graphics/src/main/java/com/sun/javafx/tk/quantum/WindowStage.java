@@ -606,16 +606,7 @@ public class WindowStage extends GlassStage {
     }
 
     private boolean hasPermission(Permission perm) {
-        try {
-            @SuppressWarnings("removal")
-            final SecurityManager sm = System.getSecurityManager();
-            if (sm != null) {
-                sm.checkPermission(perm, getAccessControlContext());
-            }
-            return true;
-        } catch (SecurityException se) {
-            return false;
-        }
+        return true;
     }
 
     private boolean fullScreenFromUserEvent = false;

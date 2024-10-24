@@ -828,15 +828,6 @@ public class J2DPrinterJob implements PrinterJobImpl {
      * to be made before we start the underlying native job.
      */
     private void checkPermissions() {
-        @SuppressWarnings("removal")
-        SecurityManager security = System.getSecurityManager();
-        if (security != null) {
-            security.checkPrintJobAccess();
-            String file = settings.getOutputFile();
-            if (file != null && !file.isEmpty()) {
-                security.checkWrite(file);
-            }
-        }
     }
 
     /*

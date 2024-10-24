@@ -47,7 +47,6 @@ import com.sun.javafx.stage.StageHelper;
 import com.sun.javafx.stage.StagePeerListener;
 import com.sun.javafx.tk.TKStage;
 import com.sun.javafx.tk.Toolkit;
-import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
 import javafx.beans.NamedArg;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.DoublePropertyBase;
@@ -1126,18 +1125,6 @@ public class Stage extends Window {
             boolean rtl = scene != null && scene.getEffectiveNodeOrientation() == NodeOrientation.RIGHT_TO_LEFT;
 
             StageStyle stageStyle = getStyle();
-            if (stageStyle == StageStyle.TRANSPARENT) {
-                @SuppressWarnings("removal")
-                final SecurityManager securityManager =
-                        System.getSecurityManager();
-                if (securityManager != null) {
-                    try {
-                        securityManager.checkPermission(CREATE_TRANSPARENT_WINDOW_PERMISSION);
-                    } catch (final SecurityException e) {
-                        stageStyle = StageStyle.UNDECORATED;
-                    }
-                }
-            }
             setPeer(toolkit.createTKStage(this, isSecurityDialog(),
                     stageStyle, isPrimary(), getModality(), tkStage, rtl, acc));
             getPeer().setMinimumSize((int) Math.ceil(getMinWidth()),
