@@ -25,7 +25,6 @@
 
 package com.sun.javafx.application;
 
-import static com.sun.javafx.FXPermissions.CREATE_TRANSPARENT_WINDOW_PERMISSION;
 import com.sun.javafx.PlatformUtil;
 import com.sun.javafx.application.preferences.PlatformPreferences;
 import com.sun.javafx.application.preferences.PreferenceMapping;

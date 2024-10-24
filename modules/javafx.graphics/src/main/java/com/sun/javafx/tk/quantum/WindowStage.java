@@ -53,7 +53,6 @@ import com.sun.prism.Image;
 import com.sun.prism.PixelFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import static com.sun.javafx.FXPermissions.*;
 
 public class WindowStage extends GlassStage {
 
@@ -574,14 +573,7 @@ public class WindowStage extends GlassStage {
         }
 
         if (alwaysOnTop) {
-            if (hasPermission(SET_WINDOW_ALWAYS_ON_TOP_PERMISSION)) {
-                platformWindow.setLevel(Level.FLOATING);
-            } else {
-                alwaysOnTop = false;
-                if (stageListener != null) {
-                    stageListener.changedAlwaysOnTop(alwaysOnTop);
-                }
-            }
+            platformWindow.setLevel(Level.FLOATING);
         } else {
             platformWindow.setLevel(Level.NORMAL);
         }
@@ -597,16 +589,12 @@ public class WindowStage extends GlassStage {
     // security manager, or a permission check doesn't result in a security
     // exeception.
     boolean isTrustedFullScreen() {
-        return hasPermission(UNRESTRICTED_FULL_SCREEN_PERMISSION);
+        return true;
     }
 
     // Safely exit full screen
     void exitFullScreen() {
         setFullScreen(false);
-    }
-
-    private boolean hasPermission(Permission perm) {
-        return true;
     }
 
     private boolean fullScreenFromUserEvent = false;
