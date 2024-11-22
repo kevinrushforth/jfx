@@ -6,10 +6,12 @@ This document includes instructions for adding a JavaFX incubator module to the 
 
 ## Adding an Incubator module
 
-1. Modify the following existing files:
+To add an incubator module, do the following:
 
-* build-incubator.gradle
+1. Add an entry for your module in `settings-incubator.gradle` and `build-incubator.gradle` in the designated place
+2. Create your module under `modules/jfx.incubator.YOURMODULENAME`, including your source code and test code as is done for other modules
+3. Add the needed build logic in `modules/jfx.incubator.YOURMODULENAME/project.gradle`
 
-Add your module here
+Here is an example:
 
-settings-incubator.gradle
+KCR: include diffs here
