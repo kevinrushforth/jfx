@@ -32,7 +32,7 @@ java --enable-native-access=javafx.graphics,javafx.media,javafx.web
 
 See [JDK-8347744](https://bugs.openjdk.org/browse/JDK-8347744) for more information.
 
-i### The `jdk.jsobject` Module is Now Included with JavaFX
+### The `jdk.jsobject` Module is Now Included with JavaFX
 
 The `jdk.jsobject` module, which is used by JavaFX WebView applications, is now included with JavaFX, replacing the JDK module of the same name. The `jdk.jsobject` module is deprecated as of JDK 24, and will be removed in a future release of the JDK.
 
