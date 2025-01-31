@@ -4,7 +4,7 @@
 
 The following notes describe important changes and information about this release. In some cases, the descriptions provide links to additional detailed information about an issue or a change.
 
-These release notes cover the standalone JavaFX 24 release. JavaFX 24 requires JDK 22 or later.
+These release notes cover the standalone JavaFX 24 release. JavaFX 24 requires JDK 22 or later. JDK 24 is recommended.
 
 ## Important Changes
 
