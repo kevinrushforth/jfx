@@ -71,6 +71,12 @@ Applications that want to use this feature can use existing open-source Image I/
 
 See [JDK-8306707](https://bugs.openjdk.org/browse/JDK-8306707) for more information.
 
+### ScrollPane Consumes Navigation Keys Only When It Has Direct Focus
+
+TODO: Copy Description from release-note Sub-task, JDK-8343066
+
+See [JDK-8340852](https://bugs.openjdk.org/browse/JDK-8340852) for more information.
+
 ## Removed Features and Options
 
 ### JavaFX No Longer Supports Running With a Security Manager
