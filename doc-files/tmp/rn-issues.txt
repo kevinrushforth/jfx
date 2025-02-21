@@ -1,0 +1,6 @@
+JDK-8342622 JDK-8340003 Release Note: JavaFX 24 Requires JDK 22 or Later
+JDK-8344142 JDK-8306707 Release Note: Pluggable Image Loading via javax.imageio
+JDK-8346566 JDK-8345121 Release Note: JavaFX Warning Printed for Use of Terminally Deprecated Methods in sun.misc.Unsafe
+JDK-8342623 JDK-8337280 Release Note: The `jdk.jsobject` Module is Now Included with JavaFX
+JDK-8347745 JDK-8347744 Release Note: JavaFX Applications Must Use `--enable-native-access`
+JDK-8342628 JDK-8341090 Release Note: JavaFX No Longer Supports Running With a Security Manager
