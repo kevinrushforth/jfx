@@ -41,7 +41,7 @@ import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import com.sun.javafx.PlatformUtil;
+import com.sun.javafx.application.PlatformImpl;
 import test.util.Util;
 
 /**
@@ -313,8 +313,8 @@ public class NestedEventLoopTest {
         });
     }
 
-    // On some platforms there is a limit on the number of nested event loops.
-    // An exception is thrown if we exceed this limit.
+    // Verify that an exception is thrown if we exceed the maximum number of
+    // nested event loops.
     private void createManyNestedLoops(int n, Object previousLoop, AtomicBoolean exceptionThrown) {
         if (exceptionThrown.get()) {
             // Previous run loop was not created.
@@ -334,7 +334,7 @@ public class NestedEventLoopTest {
 
             try {
                 Platform.enterNestedEventLoop(thisLoop);
-            } catch (RuntimeException ex) {
+            } catch (IllegalStateException ex) {
                 exceptionThrown.set(true);
             }
 
@@ -349,14 +349,14 @@ public class NestedEventLoopTest {
             // Test the exception case first to ensure the system recovers
             // correctly.
             AtomicBoolean expectedException = new AtomicBoolean(false);
-            createManyNestedLoops(260, null, expectedException);
+            createManyNestedLoops(PlatformImpl.MAX_NESTED_EVENT_LOOPS + 1, null, expectedException);
             assertFalse(Platform.isNestedLoopRunning());
 
             AtomicBoolean noExceptionExpected = new AtomicBoolean(false);
-            createManyNestedLoops(240, null, noExceptionExpected);
+            createManyNestedLoops(PlatformImpl.MAX_NESTED_EVENT_LOOPS, null, noExceptionExpected);
             assertFalse(Platform.isNestedLoopRunning());
 
-            assertEquals(expectedException.get(), PlatformUtil.isMac());
+            assertTrue(expectedException.get());
             assertFalse(noExceptionExpected.get());
         });
     }
