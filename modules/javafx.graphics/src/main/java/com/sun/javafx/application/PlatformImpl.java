@@ -982,8 +982,4 @@ public class PlatformImpl {
         }
     }
 
-    /**
-     * The maximum number of nested event loops.
-     */
-    public static final int MAX_NESTED_EVENT_LOOPS = 200;
 }
