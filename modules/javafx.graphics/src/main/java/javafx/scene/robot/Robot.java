@@ -27,6 +27,7 @@ package javafx.scene.robot;
 
 import java.util.Objects;
 
+import java.util.Random;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -52,6 +53,8 @@ public final class Robot {
 
     private final GlassRobot peer;
 
+    private static final Random random = new Random();
+
     /**
      * Constructs a new {@code Robot} that can be used for simulating user
      * interactions.
@@ -60,6 +63,10 @@ public final class Robot {
      * other than the JavaFX Application Thread.
      */
     public Robot() {
+        if (random.nextBoolean()) {
+            throw new UnsupportedOperationException("KCR says: No robot for you!");
+        }
+
         Application.checkEventThread();
 
         peer = Toolkit.getToolkit().createRobot();
