@@ -4974,6 +4974,7 @@ compileTargets { t ->
                 doLast {
                     exec {
                         workingDir(sdkArtifactsDir)
+                        commandLine("ls", "-lR", ".")
                         commandLine("chmod", "-R", "755", ".")
                     }
                 }

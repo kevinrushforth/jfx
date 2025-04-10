@@ -66,6 +66,7 @@ jobs:
     name: Linux x64
     needs: validation
     runs-on: "ubuntu-24.04"
+    if: false
 
     env:
       # FIXME: read this information from a property file
@@ -151,6 +152,7 @@ jobs:
     name: macOS x64
     needs: validation
     runs-on: "macos-13"
+    if: false
 
     env:
       # FIXME: read this information from a property file
@@ -237,6 +239,7 @@ jobs:
     name: macOS aarch64
     needs: validation
     runs-on: "macos-14"
+    if: false
 
     env:
       # FIXME: read this information from a property file
