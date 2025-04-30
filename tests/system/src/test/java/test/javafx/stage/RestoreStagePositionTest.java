@@ -49,7 +49,7 @@ public class RestoreStagePositionTest {
         initFX();
         try {
             RestoreStagePositionTest test = new RestoreStagePositionTest();
-            test.testUfullscreenPosition();
+            test.testUnfullscreenPosition();
             test.testDemaximizedPosition();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -83,10 +83,7 @@ public class RestoreStagePositionTest {
     }
 
     @Test
-    public void testUfullscreenPosition() throws Exception {
-        // Disable on Mac until JDK-8176813 is fixed
-        assumeTrue(!PlatformUtil.isMac());
-
+    public void testUnfullscreenPosition() throws Exception {
         Thread.sleep(200);
         Assertions.assertTrue(stage.isShowing());
         Assertions.assertFalse(stage.isFullScreen());
@@ -95,7 +92,7 @@ public class RestoreStagePositionTest {
         double y = stage.getY();
 
         Platform.runLater(() -> stage.setFullScreen(true));
-        Thread.sleep(400);
+        Thread.sleep(800);
         Assertions.assertTrue(stage.isFullScreen());
         CountDownLatch latch = new CountDownLatch(2);
 
@@ -122,9 +119,6 @@ public class RestoreStagePositionTest {
 
     @Test
     public void testDemaximizedPosition() throws Exception {
-        // Disable on Mac until JDK-8089230 is fixed
-        assumeTrue(!PlatformUtil.isMac());
-
         Thread.sleep(200);
         Assertions.assertTrue(stage.isShowing());
         Assertions.assertFalse(stage.isMaximized());
@@ -133,7 +127,7 @@ public class RestoreStagePositionTest {
         double y = stage.getY();
 
         Platform.runLater(() -> stage.setMaximized(true));
-        Thread.sleep(200);
+        Thread.sleep(500);
         Assertions.assertTrue(stage.isMaximized());
         CountDownLatch latch = new CountDownLatch(2);
 
