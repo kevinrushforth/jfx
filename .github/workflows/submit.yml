@@ -300,7 +300,7 @@ jobs:
           java -version
           which ant
           ant -version
-          sudo xcode-select --switch /Applications/Xcode_16.2.app/Contents/Developer
+          sudo xcode-select --switch /Applications/Xcode_16.3.app/Contents/Developer
           xcodebuild -version
 
       - name: Build JavaFX artifacts
