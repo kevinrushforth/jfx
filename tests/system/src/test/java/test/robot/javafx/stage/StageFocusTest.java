@@ -107,6 +107,8 @@ public class StageFocusTest {
 
     @AfterEach
     public void doTeardownEach() throws InterruptedException {
+        assumeTrue(!Util.isOnWayland()); // JDK-8367893
+
         hideTestStage(currentTestStage);
         currentTestStage = null;
     }
