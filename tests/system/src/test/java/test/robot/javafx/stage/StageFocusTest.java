@@ -51,6 +51,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.FieldSource;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 // NOTE: This test does NOT extend VisualTestBase, as the focus issues mostly happen
@@ -177,6 +178,8 @@ public class StageFocusTest {
     @ParameterizedTest
     @FieldSource("testStages")
     public void testStageHasFocusAfterShow(Stage stage) throws InterruptedException {
+        assumeTrue(!Util.isOnWayland()); // JDK-8367893
+
         // TODO once we upgrade JUnit5 and have parameterized class-level tests
         //      this can be removed and be an actual @BeforeEach
         setupEach(stage);
