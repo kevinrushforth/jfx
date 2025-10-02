@@ -66,6 +66,7 @@ jobs:
     name: Linux x64
     needs: validation
     runs-on: "ubuntu-24.04"
+    if: false
 
     env:
       # FIXME: read this information from a property file
@@ -150,7 +151,7 @@ jobs:
   macos_x64_build:
     name: macOS x64
     needs: validation
-    runs-on: "macos-13"
+    runs-on: "macos-14-bogus"
 
     env:
       # FIXME: read this information from a property file
@@ -212,8 +213,7 @@ jobs:
           java -version
           which ant
           ant -version
-          # We want to use Xcode 15.4, but 15.2 is the highest that the GHA macOS 13 runner supports
-          sudo xcode-select --switch /Applications/Xcode_15.2.app/Contents/Developer
+          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
           xcodebuild -version
 
       - name: Build JavaFX artifacts
@@ -238,6 +238,7 @@ jobs:
     name: macOS aarch64
     needs: validation
     runs-on: "macos-14"
+    if: false
 
     env:
       # FIXME: read this information from a property file
@@ -324,6 +325,7 @@ jobs:
     name: Windows x64
     needs: validation
     runs-on: "windows-2022"
+    if: false
 
     env:
       # FIXME: read this information from a property file
