@@ -213,7 +213,8 @@ jobs:
           java -version
           which ant
           ant -version
-          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+          # We want to use Xcode 15.4, but 16.0 is the lowest that the GHA macOS 15 runner supports
+          sudo xcode-select --switch /Applications/Xcode_16.0.app/Contents/Developer
           xcodebuild -version
 
       - name: Build JavaFX artifacts
@@ -299,7 +300,8 @@ jobs:
           java -version
           which ant
           ant -version
-          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+          # We want to use Xcode 15.4, but 16.0 is the lowest that the GHA macOS 15 runner supports
+          sudo xcode-select --switch /Applications/Xcode_16.0.app/Contents/Developer
           xcodebuild -version
 
       - name: Build JavaFX artifacts
