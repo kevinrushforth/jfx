@@ -151,7 +151,7 @@ jobs:
   macos_x64_build:
     name: macOS x64
     needs: validation
-    runs-on: "macos-14-intel"
+    runs-on: "macos-15-intel"
 
     env:
       # FIXME: read this information from a property file
@@ -237,8 +237,7 @@ jobs:
   macos_aarch64_build:
     name: macOS aarch64
     needs: validation
-    runs-on: "macos-14"
-    if: false
+    runs-on: "macos-15"
 
     env:
       # FIXME: read this information from a property file
