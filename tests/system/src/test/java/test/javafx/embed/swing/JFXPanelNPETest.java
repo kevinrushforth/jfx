@@ -97,6 +97,9 @@ public class JFXPanelNPETest {
                 Platform.runLater(() -> contentPane.setScene(webView.getScene()));
                 Thread.sleep(1);
             }
+            // Wait for both threads to process the earlier runnables
+            SwingUtilities.invokeAndWait(() -> {});
+            Util.runAndWait(() -> {});
         } finally {
             OutputRedirect.checkAndRestoreStderr();
         }
