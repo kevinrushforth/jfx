@@ -33,7 +33,7 @@ See [JDK-8359759](https://bugs.openjdk.org/browse/JDK-8359759) for more informat
 Issue Key | Summary | Subcomponent
 --------- | ------- | ------------
 [JDK-8372203](https://bugs.openjdk.org/browse/JDK-8372203) | Piecewise linear easing function | animation
-[JDK-8091429](https://bugs.openjdk.org/browse/JDK-8091429) | ObservableList<E>#replaceRange(int from, int to, Collection<? extends E> col) | base
+[JDK-8091429](https://bugs.openjdk.org/browse/JDK-8091429) | ObservableList&lt;E&gt;#replaceRange(int from, int to, Collection&lt;? extends E&gt; col) | base
 [JDK-8370446](https://bugs.openjdk.org/browse/JDK-8370446) | Support dialogs with StageStyle.EXTENDED (Preview) | controls
 [JDK-8371070](https://bugs.openjdk.org/browse/JDK-8371070) | RichParagraph enhancements | controls
 [JDK-8374035](https://bugs.openjdk.org/browse/JDK-8374035) | RichTextArea: add insertStyles property | controls
@@ -73,7 +73,7 @@ Issue Key | Summary | Subcomponent
 --------- | ------- | ------------
 [JDK-8374329](https://bugs.openjdk.org/browse/JDK-8374329) | PasswordField ignores custom accessible text | accessibility
 [JDK-8378366](https://bugs.openjdk.org/browse/JDK-8378366) | Accessibility issues in CSS Reference Guide and Introduction to FXML | accessibility
-[JDK-8378507](https://bugs.openjdk.org/browse/JDK-8378507) | JavaFX CSS Reference skips heading levels: `<h2>` followed by `<h4>` | accessibility
+[JDK-8378507](https://bugs.openjdk.org/browse/JDK-8378507) | JavaFX CSS Reference skips heading levels: &lt;h2&gt; followed by &lt;h4&gt; | accessibility
 [JDK-8184166](https://bugs.openjdk.org/browse/JDK-8184166) | SortedList does not free up memory | base
 [JDK-8373885](https://bugs.openjdk.org/browse/JDK-8373885) | Compilation failure due to a warning when compiling with Java 25 | build
 [JDK-8296653](https://bugs.openjdk.org/browse/JDK-8296653) | ComboBox promptText is not displayed when the value is reset | controls
