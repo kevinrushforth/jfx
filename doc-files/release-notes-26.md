@@ -73,7 +73,7 @@ Issue Key | Summary | Subcomponent
 --------- | ------- | ------------
 [JDK-8374329](https://bugs.openjdk.org/browse/JDK-8374329) | PasswordField ignores custom accessible text | accessibility
 [JDK-8378366](https://bugs.openjdk.org/browse/JDK-8378366) | Accessibility issues in CSS Reference Guide and Introduction to FXML | accessibility
-[JDK-8378507](https://bugs.openjdk.org/browse/JDK-8378507) | JavaFX CSS Reference skips heading levels: <h2> followed by <h4> | accessibility
+[JDK-8378507](https://bugs.openjdk.org/browse/JDK-8378507) | JavaFX CSS Reference skips heading levels: `<h2>` followed by `<h4>` | accessibility
 [JDK-8184166](https://bugs.openjdk.org/browse/JDK-8184166) | SortedList does not free up memory | base
 [JDK-8373885](https://bugs.openjdk.org/browse/JDK-8373885) | Compilation failure due to a warning when compiling with Java 25 | build
 [JDK-8296653](https://bugs.openjdk.org/browse/JDK-8296653) | ComboBox promptText is not displayed when the value is reset | controls
@@ -88,7 +88,7 @@ Issue Key | Summary | Subcomponent
 [JDK-8367602](https://bugs.openjdk.org/browse/JDK-8367602) | Regression: TabPane with wrapped label calculates wrong initial size | controls
 [JDK-8369085](https://bugs.openjdk.org/browse/JDK-8369085) | RichTextArea SELECT_PARAGRAPH to include line separator | controls
 [JDK-8370253](https://bugs.openjdk.org/browse/JDK-8370253) | CodeArea: NPE on copy | controls
-[JDK-8370652](https://bugs.openjdk.org/browse/JDK-8370652) | Control and ScrollPaneSkin should snap computed width/height values to prevent scrollbars appearing due to rounding errors | controls
+[JDK-8370652](https://bugs.openjdk.org/browse/JDK-8370652) | Control and ScrollPaneSkin should snap computed width/height values to prevent scrollbars<br>appearing due to rounding errors | controls
 [JDK-8371067](https://bugs.openjdk.org/browse/JDK-8371067) | RichTextArea: requestLayout by inline node doesn't reach VFlow | controls
 [JDK-8371069](https://bugs.openjdk.org/browse/JDK-8371069) | RichTextArea: caret with inline node | controls
 [JDK-8371080](https://bugs.openjdk.org/browse/JDK-8371080) | RichTextArea: missing styles in Caspian | controls
@@ -126,7 +126,7 @@ Issue Key | Summary | Subcomponent
 [JDK-8364405](https://bugs.openjdk.org/browse/JDK-8364405) | Intermittent MenuDoubleShortcutTest failure on Linux and macOS | other
 [JDK-8368219](https://bugs.openjdk.org/browse/JDK-8368219) | Skip MenuDoubleShortcutTest on macOS & Linux | other
 [JDK-8368375](https://bugs.openjdk.org/browse/JDK-8368375) | Skip intermittently failing SWTCursorsTest | other
-[JDK-8360940](https://bugs.openjdk.org/browse/JDK-8360940) | Layout stops updating when using Parent#setNeedsLayout(true) due to incorrect state management | scenegraph
+[JDK-8360940](https://bugs.openjdk.org/browse/JDK-8360940) | Layout stops updating when using Parent#setNeedsLayout(true) due to incorrect state<br>management | scenegraph
 [JDK-8372761](https://bugs.openjdk.org/browse/JDK-8372761) | Prevent degenerate transforms for zero-size Scene/SubScene | scenegraph
 [JDK-8374515](https://bugs.openjdk.org/browse/JDK-8374515) | javafx.scene.PropertyHelper causes uncessary silent NullPointerException | scenegraph
 [JDK-8255248](https://bugs.openjdk.org/browse/JDK-8255248) | NullPointerException in JFXPanel due to race condition in HostContainer | swing
@@ -156,7 +156,7 @@ Issue Key | Summary | Subcomponent
 [JDK-8367370](https://bugs.openjdk.org/browse/JDK-8367370) | Accent color platform preference not updating in macOS 26 (Tahoe) | window-toolkit
 [JDK-8368021](https://bugs.openjdk.org/browse/JDK-8368021) | Window buttons of extended RTL stage are on the wrong side | window-toolkit
 [JDK-8371106](https://bugs.openjdk.org/browse/JDK-8371106) | [macOS] Min/max window height is incorrect for EXTENDED StageStyle | window-toolkit
-[JDK-8371302](https://bugs.openjdk.org/browse/JDK-8371302) | [Windows] Stage coordinates in secondary display are not properly updated after changing settings of first display | window-toolkit
+[JDK-8371302](https://bugs.openjdk.org/browse/JDK-8371302) | [Windows] Stage coordinates in secondary display are not properly updated after changing<br>settings of first display | window-toolkit
 
 ## List of Security fixes
 
