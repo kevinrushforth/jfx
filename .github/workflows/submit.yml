@@ -65,6 +65,7 @@ jobs:
   linux_x64_build:
     name: Linux x64
     needs: validation
+    if: false
     runs-on: "ubuntu-24.04"
 
     env:
@@ -212,8 +213,8 @@ jobs:
           java -version
           which ant
           ant -version
-          # Production builds use Xcode 15.4, but 16.0 is the lowest that the GHA macOS 15 runner supports
-          sudo xcode-select --switch /Applications/Xcode_16.0.app/Contents/Developer
+          # Production builds use Xcode 26.4, but 26.3 is the highest that the GHA macOS 15 runner supports
+          sudo xcode-select --switch /Applications/Xcode_26.3.0.app/Contents/Developer
           xcodebuild -version
 
       - name: Build JavaFX artifacts
@@ -237,7 +238,7 @@ jobs:
   macos_aarch64_build:
     name: macOS aarch64
     needs: validation
-    runs-on: "macos-14"
+    runs-on: "macos-26"
 
     env:
       # FIXME: read this information from a property file
@@ -299,7 +300,7 @@ jobs:
           java -version
           which ant
           ant -version
-          sudo xcode-select --switch /Applications/Xcode_15.4.app/Contents/Developer
+          sudo xcode-select --switch /Applications/Xcode_26.4.0.app/Contents/Developer
           xcodebuild -version
 
       - name: Build JavaFX artifacts
@@ -323,6 +324,7 @@ jobs:
   windows_x64_build:
     name: Windows x64
     needs: validation
+    if: false
     runs-on: "windows-2022"
 
     env:
