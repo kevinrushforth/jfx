@@ -189,6 +189,7 @@ if (hasProperty('toolchainDir')) {
         ignoreExitValue(true);
     }
     metalCompiler = path.toString().trim();
+    metalCompiler = "metal"  // KCR: hack to force it to use the PATH
 
     path = new ByteArrayOutputStream();
     execOps.exec { spec ->
@@ -198,6 +199,7 @@ if (hasProperty('toolchainDir')) {
         ignoreExitValue(true);
     }
     metalLinker = path.toString().trim();
+    metalLinker = "metallib"  // KCR: hack to force it to use the PATH
 
     if (metalCompiler == "" || metalLinker == "") {
         throw new GradleException(
