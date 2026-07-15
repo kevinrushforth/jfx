@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,21 +23,25 @@
  * questions.
  */
 
-package com.sun.jfx.incubator.scene.control.richtext;
+package com.sun.javafx.stage;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.application.ColorScheme;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.geometry.Dimension2D;
+import javafx.stage.StageStyle;
+import javafx.util.Subscription;
 
 /**
- * A spacer node used to emulate the first line indent.
- *
- * FIX problems:
- * - selection: TextFlow thinks there is a separate node (click on left side, move to right side of this node)
- * - messes up TextCell length computation
+ * Properties that are relevant for stages with the {@link StageStyle#EXTENDED} style.
  */
-public class FirstLineIndentSpacer extends Rectangle {
-    public FirstLineIndentSpacer(double width) {
-        super(width, 1);
-        setFill(Color.rgb(0, 0, 0, 0.0));
-    }
+public interface ExtendedStageProperties {
+    ReadOnlyObjectProperty<Dimension2D> leftSystemInsetProperty();
+    ReadOnlyObjectProperty<Dimension2D> rightSystemInsetProperty();
+    ReadOnlyDoubleProperty systemMinHeightProperty();
+    DoubleProperty systemButtonHeightProperty();
+    ObjectProperty<ColorScheme> systemColorSchemeProperty();
+    Subscription subscribeLayoutInvalidated(Runnable listener);
 }
