@@ -298,6 +298,7 @@ jobs:
           ant -version
           # Production builds use Xcode 26.4, but 26.3 is the highest that the GHA macOS 15 runner supports
           sudo xcode-select --switch /Applications/Xcode_26.3.0.app/Contents/Developer
+          xcodebuild -downloadComponent metalToolchain
           xcodebuild -version
 
       - name: Build JavaFX artifacts
@@ -383,8 +384,8 @@ jobs:
           java -version
           which ant
           ant -version
-          # Production builds use Xcode 26.4, but 26.3 is the highest that the GHA macOS 15 runner supports
-          sudo xcode-select --switch /Applications/Xcode_26.3.0.app/Contents/Developer
+          sudo xcode-select --switch /Applications/Xcode_26.4.app/Contents/Developer
+          xcodebuild -downloadComponent metalToolchain
           xcodebuild -version
 
       - name: Build JavaFX artifacts
