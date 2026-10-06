@@ -176,7 +176,6 @@ def metalToolchainDir
 def metalCompiler
 def metalLinker
 
-
 if (hasProperty('toolchainDir')) {
     toolchainDir = ext.toolchainDir + "/"
     if (hasProperty('metalToolchainDir')) {
